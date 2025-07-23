@@ -36,6 +36,7 @@ def setTeacherTime():
 
 def startGame():
     mainMenu = False
+    playingGame = True
     setSafeTime()
 
 def drawTeacher():
