@@ -17,6 +17,7 @@ safeTimeMin = 1 * FPS
 safeTimeMax = 8 * FPS
 teacherTimeMin = 2 * FPS
 teacherTimeMax = 10 * FPS
+score = 0
 running = True
 isTeacherLooking = False
 isCheating = False
@@ -52,6 +53,10 @@ def drawGameOver():
     text_surface = font.render('Game Over!', True, (255, 0, 0))
     screen.blit(text_surface, (WIDTH/2, HEIGHT/2))
 
+def drawScore():
+    text_surface = font.render('Score: '+ str(score), True, (255, 255, 255))
+    screen.blit(text_surface, (WIDTH/2, 200))
+
 # Create the display
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Sneak Cheat")
@@ -70,6 +75,7 @@ while running:
 
     if playingGame and pygame.mouse.get_pressed(3)[0] == True:
         isCheating = True
+        score += 1
     else:
         isCheating = False    
 
@@ -99,8 +105,10 @@ while running:
     # Draw your game elements here
     if playingGame:
         drawTeacher()
+        drawScore()
     elif gameOver:
         drawGameOver()
+        drawScore()
 
     pygame.display.flip()  # Update the screen
 
