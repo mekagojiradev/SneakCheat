@@ -230,12 +230,20 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
+        if musicNotStarted:
+            mixer.set_music(start=True)
+            musicNotStarted = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             if mainMenu:
                 startGame()
+                mixer.set_music(isPlaying=True)
             elif gameOver:
-                startGame()
+                isTeacherLooking = False
+                startGame() # need to figure this out 
+                musicNotStarted = True
+                mixer.stop_music()
+                mixer.yell(stop=True)
+               
 
     if playingGame and pygame.mouse.get_pressed(3)[0]:
         if musicNotStarted:

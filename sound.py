@@ -26,6 +26,9 @@ class Mixer:
         if isPlaying:
             self.mixer.music.load(self.game_music)
             self.mixer.music.play(-1)
+            
+    def stop_music(self) -> None:
+        self.mixer.music.stop()
         
     def yell(self, stop: bool = False, volume: float = None) -> None:
         if volume and volume > 0:
