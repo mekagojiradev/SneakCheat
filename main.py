@@ -1,6 +1,8 @@
 import pygame
 import sys
 import random
+import sound
+import time
 
 # --- Initialization ---
 pygame.init()
@@ -25,6 +27,9 @@ mainMenu = False
 playingGame = True
 gameOver = False
 font = pygame.font.SysFont(None, 36)
+mixer = sound.Mixer()
+wasClicking = False
+musicNotStarted = True
 
 # Arguments for the drawing functions - Quick Reference
 # pygame.draw.rect(surface, color, rect, width=0, border_radius=0)
@@ -142,17 +147,33 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
+    if musicNotStarted:
+        mixer.set_music()
+        musicNotStarted = False
+    
     if playingGame and pygame.mouse.get_pressed(3)[0] == True:
         isCheating = True
+
         score += 1
+       
+        if not wasClicking:
+            mixer.writing(volume=1.0)
+            wasClicking = True
+            
     else:
+        if wasClicking:
+            mixer.writing(stop=True)
+            wasClicking = False
         isCheating = False    
 
     # --- Game Logic ---
     # Update your game state here
     
     if isCheating and isTeacherLooking:
+        mixer.writing(stop=True)
+        mixer.yell()
+        mixer.set_music(gameOver=True)
+        time.sleep(2)
         gameOver = True
         playingGame = False
 
