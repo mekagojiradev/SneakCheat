@@ -263,7 +263,6 @@ while running:
         mixer.writing(stop=True)
         mixer.yell()
         mixer.set_music(gameOver=True)
-        time.sleep(2)
         gameOver = True
         playingGame = False
 
