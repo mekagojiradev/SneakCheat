@@ -22,6 +22,8 @@ teacherTimeMax = 10 * FPS
 score = 0
 running = True
 isTeacherLooking = False
+teacherTurning = False
+turnTime = 20 # TO determine how long the transition is
 isCheating = False
 mainMenu = False
 playingGame = True
@@ -61,8 +63,12 @@ def drawTeacher():
 
     if isTeacherLooking:
         body_color = (255, 0, 0)  # angry red
+    
+    elif teacherTurning:
+        body_color = (255,255,0) # Yellow
     else:
         body_color = (0, 128, 0)  # calm green
+    
 
     # Head
     pygame.draw.rect(screen, (255, 224, 189), (x + 10, y, 40, 40))  # head
@@ -147,8 +153,12 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+            
+    # if gameOver and pygame.mouse.get_pressed(3)[0]: 
+    #     startGame()
+        
     if musicNotStarted:
-        mixer.set_music()
+        mixer.set_music(isPlaying=True)
         musicNotStarted = False
     
     if playingGame and pygame.mouse.get_pressed(3)[0] == True:
@@ -164,6 +174,7 @@ while running:
         if wasClicking:
             mixer.writing(stop=True)
             wasClicking = False
+            
         isCheating = False    
 
     # --- Game Logic ---
@@ -183,10 +194,14 @@ while running:
            isTeacherLooking = True
            setTeacherTime()
         else: 
+            if 0 < safeTime < turnTime:
+                teacherTurning = True
             safeTime -= 1
+            
     elif playingGame and isTeacherLooking:
         if teacherTime <= 0:
             isTeacherLooking = False
+            teacherTurning = False
             setSafeTime()
         else:
             teacherTime -= 1
