@@ -2,28 +2,28 @@ from pygame import mixer
 
  
 class Mixer:
-    DIR = 'assets/sound'
+    DIR = 'assets/sound/' # Current path structure
     
     def __init__(self) -> None:
         mixer.init()
         self.mixer = mixer
         
-        self.menu_music = 'assets/sound/start_menu.wav'
-        self.game_music = 'assets/sound/game_music.mp3'
-        self.game_over = 'assets/sound/beatz.wav'
+        self.menu_music = f'{Mixer.DIR}start_menu.wav'
+        self.game_music = f'{Mixer.DIR}game_music.mp3'
+        self.game_over = f'{Mixer.DIR}beatz.wav'
         self.mixer.music.load(self.menu_music)
         
-        self.pencil = self.mixer.Sound('assets/sound/writing-pencil.wav')
-        self.teacher = self.mixer.Sound('assets/sound/male-yelling.wav') 
+        self.pencil = self.mixer.Sound(f'{Mixer.DIR}writing-pencil.wav')
+        self.teacher = self.mixer.Sound(f'{Mixer.DIR}male-yelling.wav') 
     
-    def set_music(self, start: bool = False, gameOver: bool = False, isPlaying: bool = True) -> None:
+    def set_music(self, start: bool = False, gameOver: bool = False, isPlaying: bool = False) -> None:
         if start:
             self.mixer.music.load(self.menu_music)
             self.mixer.music.play(-1)
         if gameOver:
             self.mixer.music.load(self.game_over)
             self.mixer.music.play(-1)
-        else:
+        if isPlaying:
             self.mixer.music.load(self.game_music)
             self.mixer.music.play(-1)
         

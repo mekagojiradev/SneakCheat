@@ -81,7 +81,9 @@ def drawTeacher():
     floor_y = int(HEIGHT * 0.65)
     teacher_y = floor_y - 140
 
+
     body_color = (255, 0, 0) if isTeacherLooking else (0, 128, 0)
+
 
     pygame.draw.rect(screen, (255, 224, 189), (teacher_x + 10, teacher_y, 40, 40))
     pygame.draw.rect(screen, body_color, (teacher_x, teacher_y + 40, 60, 60))
@@ -228,6 +230,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
         if event.type == pygame.MOUSEBUTTONDOWN:
             if mainMenu:
                 startGame()
@@ -236,7 +239,7 @@ while running:
 
     if playingGame and pygame.mouse.get_pressed(3)[0]:
         if musicNotStarted:
-            mixer.set_music()
+            mixer.set_music(isPlaying=True)
             musicNotStarted = False
     
     if playingGame and pygame.mouse.get_pressed(3)[0] == True:
@@ -253,6 +256,7 @@ while running:
         if wasClicking:
             mixer.writing(stop=True)
             wasClicking = False
+            
         isCheating = False    
 
     if isCheating and isTeacherLooking:
@@ -265,6 +269,7 @@ while running:
 
     if playingGame and not isTeacherLooking:
         if safeTime <= 0:
+
             isTeacherLooking = True
             setTeacherTime()
         else:
@@ -273,9 +278,11 @@ while running:
                 showWarning = True
                 teacherBlinking = True
                 blinkCounter += 1
+
     elif playingGame and isTeacherLooking:
         if teacherTime <= 0:
             isTeacherLooking = False
+            
             setSafeTime()
         else:
             teacherTime -= 1
