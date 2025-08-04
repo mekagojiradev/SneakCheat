@@ -38,13 +38,11 @@ class Mixer:
         self.teacher.play() if not stop else self.teacher.stop()
     
     def writing(self, volume: float = None, stop: bool = False):
-        if volume and volume > 0:
-            volume = min(float(volume), 1.0)
+        if volume:
             self.pencil.set_volume(volume)
         self.pencil.play(-1) if not stop else self.pencil.stop()
         
     def ring_bell(self, volume: float = None, stop: bool = False):
-        if volume and volume > 0:
-            volume = min(float(volume), 1.0)
+        if volume:
             self.bell.set_volume(volume)
         self.bell.play() if not stop else self.pencil.stop()
