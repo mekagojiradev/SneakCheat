@@ -75,6 +75,15 @@ def startGame():
     gameOver = False
     score = 0
     setSafeTime()
+    
+def startMenu():
+    global mainMenu, playingGame, score, gameOver
+    mainMenu = True
+    playingGame = False
+    gameOver = False
+    score = 0
+    setSafeTime()
+    
 
 def drawTeacher():
     teacher_x = WIDTH // 2 - 30
@@ -208,8 +217,10 @@ def drawGameOver():
 
     text_surface = pygame.font.SysFont(None, 100).render('CAUGHT CHEATING!', True, (255, 0, 0))
     screen.blit(text_surface, text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50)))
-    subtext = font.render("Click anywhere to try again!", True, (255, 255, 255))
+    subtext = font.render("Left-Click to Try Again!", True, (255, 255, 255))
+    subtext1 = font.render("Right-Click to Quit!", True, (255, 255, 255))
     screen.blit(subtext, subtext.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 20)))
+    screen.blit(subtext1, subtext.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 60)))
 
 def drawScore():
     text_surface = font.render('Score: ' + str(score), True, (255, 255, 255))
@@ -238,11 +249,21 @@ while running:
                 startGame()
                 mixer.set_music(isPlaying=True)
             elif gameOver:
-                isTeacherLooking = False
-                startGame() # need to figure this out 
-                musicNotStarted = True
                 mixer.stop_music()
                 mixer.yell(stop=True)
+                isTeacherLooking = False
+                if event.button ==1: # left-click
+                    startGame() # need to figure this out 
+                    musicNotStarted = True
+                    mixer.set_music(isPlaying=True)
+                elif event.button == 3: # right-click
+                    drawMainMenu()
+                    musicNotStarted = False
+                    mixer.set_music(start=True)
+                    startMenu()
+                    
+                    
+                    
                
 
     if playingGame and pygame.mouse.get_pressed(3)[0]:
