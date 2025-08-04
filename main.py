@@ -1,6 +1,8 @@
 import pygame
 import sys
 import random
+import sound
+import time
 
 # --- Initialization ---
 pygame.init()
@@ -21,41 +23,28 @@ score = 0
 running = True
 isTeacherLooking = False
 isCheating = False
-mainMenu = False
-playingGame = True
+mainMenu = True
+playingGame = False
 gameOver = False
 font = pygame.font.SysFont(None, 36)
+background_occupied = []
+background_colors = []
+warningTime = 0
+showWarning = False
+teacherBlinking = False
+blinkCounter = 0
+mixer = sound.Mixer()
+wasClicking = False
+musicNotStarted = True
 
-# Functions
-def setSafeTime():
-    global safeTime
-    safeTime = random.randint(safeTimeMin,safeTimeMax)
-
-def setTeacherTime():
-    global teacherTime 
-    teacherTime = random.randint(teacherTimeMin, teacherTimeMax)
-
-def startGame():
-    mainMenu = False
-    playingGame = True
-    setSafeTime()
-
-def drawTeacher():
-    if isTeacherLooking:
-        pygame.draw.rect(screen, (255,0,0), (WIDTH/2,HEIGHT/2,50,50))
-    elif not isTeacherLooking:
-        if safeTime > (FPS / 2):
-            pygame.draw.rect(screen, (0,255,0), (WIDTH/2,HEIGHT/2,50,50))
-        else:
-            pygame.draw.rect(screen, (255,255,0), (WIDTH/2,HEIGHT/2,50,50))
-
-def drawGameOver():
-    text_surface = font.render('Game Over!', True, (255, 0, 0))
-    screen.blit(text_surface, (WIDTH/2, HEIGHT/2))
-
-def drawScore():
-    text_surface = font.render('Score: '+ str(score), True, (255, 255, 255))
-    screen.blit(text_surface, (WIDTH/2, 200))
+# Shirt colors used for background students
+shirt_colors = [
+    (120, 120, 120),  # gray
+    (100, 50, 50),    # faded red
+    (70, 90, 90),     # dusty teal
+    (80, 80, 110),    # muted blue
+    (110, 85, 40),    # tan/brown
+]
 
 # Create the display
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -64,53 +53,263 @@ pygame.display.set_caption("Sneak Cheat")
 # Clock for controlling frame rate
 clock = pygame.time.Clock()
 
+# Generate background desk data once at startup
+background_occupied = [random.random() < 0.5 for _ in range(6)]
+background_colors = [random.choice(shirt_colors) for _ in range(6)]
+
+def setSafeTime():
+    global safeTime, warningTime, showWarning, teacherBlinking
+    safeTime = random.randint(safeTimeMin, safeTimeMax)
+    warningTime = int(safeTime * 0.2)
+    showWarning = False
+    teacherBlinking = False
+
+def setTeacherTime():
+    global teacherTime 
+    teacherTime = random.randint(teacherTimeMin, teacherTimeMax)
+
+def startGame():
+    global mainMenu, playingGame, score, gameOver
+    mainMenu = False
+    playingGame = True
+    gameOver = False
+    score = 0
+    setSafeTime()
+
+def drawTeacher():
+    teacher_x = WIDTH // 2 - 30
+    floor_y = int(HEIGHT * 0.65)
+    teacher_y = floor_y - 140
+
+
+    body_color = (255, 0, 0) if isTeacherLooking else (0, 128, 0)
+
+
+    pygame.draw.rect(screen, (255, 224, 189), (teacher_x + 10, teacher_y, 40, 40))
+    pygame.draw.rect(screen, body_color, (teacher_x, teacher_y + 40, 60, 60))
+    pygame.draw.rect(screen, (0, 0, 0), (teacher_x, teacher_y + 100, 20, 40))
+    pygame.draw.rect(screen, (0, 0, 0), (teacher_x + 40, teacher_y + 100, 20, 40))
+
+    desk_x = WIDTH // 2 - 80
+    desk_y = floor_y - 60
+    pygame.draw.rect(screen, (139, 69, 19), (desk_x, desk_y, 160, 20))
+    pygame.draw.rect(screen, (139, 69, 19), (desk_x, desk_y + 20, 10, 60))
+    pygame.draw.rect(screen, (139, 69, 19), (desk_x + 150, desk_y + 20, 10, 60))
+
+    if isTeacherLooking:
+        pygame.draw.circle(screen, (0, 0, 0), (teacher_x + 20, teacher_y + 15), 4)
+        pygame.draw.circle(screen, (0, 0, 0), (teacher_x + 40, teacher_y + 15), 4)
+    elif teacherBlinking and blinkCounter % 30 < 15:
+        pygame.draw.circle(screen, (0, 0, 0), (teacher_x + 20, teacher_y + 15), 4)
+        pygame.draw.circle(screen, (0, 0, 0), (teacher_x + 40, teacher_y + 15), 4)
+
+    if showWarning and blinkCounter % 30 < 15:
+        warning_font = pygame.font.SysFont(None, 50)
+        warning_surface = warning_font.render('!', True, (255, 0, 0))
+        screen.blit(warning_surface, (teacher_x + 50, teacher_y - 30))
+
+def drawStudent():
+    student_x = WIDTH // 2 - 300
+    student_y = int(HEIGHT * 0.65) + 80
+
+    pygame.draw.rect(screen, (139, 69, 19), (student_x, student_y + 50, 120, 20))
+    pygame.draw.rect(screen, (139, 69, 19), (student_x, student_y + 70, 10, 40))
+    pygame.draw.rect(screen, (139, 69, 19), (student_x + 110, student_y + 70, 10, 40))
+
+    pygame.draw.rect(screen, (0, 0, 255), (student_x + 40, student_y, 40, 50))
+    pygame.draw.rect(screen, (255, 224, 189), (student_x + 45, student_y - 30, 30, 30))
+
+    if isCheating:
+        pygame.draw.rect(screen, (255, 255, 100), (student_x, student_y + 50, 120, 20), 5)
+
+def drawEmptyDesks():
+    desk_width = 120
+    desk_height = 20
+    leg_height = 40
+    leg_width = 10
+
+    base_y = int(HEIGHT * 0.65) + 80 + 50
+    center_x = WIDTH // 2 - 300
+    offsets = [-400, -200, 200, 400, 600, 800]
+
+    for i, offset in enumerate(offsets):
+        x = center_x + offset
+        y = base_y
+
+        pygame.draw.rect(screen, (139, 69, 19), (x, y, desk_width, desk_height))
+        pygame.draw.rect(screen, (139, 69, 19), (x, y + desk_height, leg_width, leg_height))
+        pygame.draw.rect(screen, (139, 69, 19), (x + desk_width - leg_width, y + desk_height, leg_width, leg_height))
+
+        if background_occupied[i]:
+            drawBackgroundStudent(x, y, background_colors[i])
+
+def drawBackgroundStudent(x, y, color):
+    pygame.draw.rect(screen, color, (x + 40, y - 50, 40, 50))
+    pygame.draw.rect(screen, (255, 224, 189), (x + 45, y - 80, 30, 30))
+
+def drawClassroom():
+    wall_height = int(HEIGHT * 0.65)
+    floor_y = wall_height
+    floor_height = HEIGHT - wall_height
+
+    pygame.draw.rect(screen, (205, 200, 190), (0, 0, WIDTH, wall_height))
+    pygame.draw.rect(screen, (160, 140, 120), (0, wall_height, WIDTH, floor_height))
+
+    chalkboard_width = 500
+    chalkboard_height = 200
+    chalkboard_x = WIDTH // 2 - chalkboard_width // 2
+    chalkboard_y = floor_y - chalkboard_height - 100
+
+    pygame.draw.rect(screen, (15, 80, 25), (chalkboard_x, chalkboard_y, chalkboard_width, chalkboard_height))
+    pygame.draw.rect(screen, (90, 60, 20), (chalkboard_x, chalkboard_y, chalkboard_width, 8))
+    pygame.draw.rect(screen, (90, 60, 20), (chalkboard_x, chalkboard_y + chalkboard_height - 8, chalkboard_width, 8))
+
+    window_width = 80
+    window_height = 180
+    window_y = chalkboard_y + 10
+    spacing_from_board = 100
+
+    left_start = chalkboard_x - window_width - spacing_from_board
+    right_start = chalkboard_x + chalkboard_width + spacing_from_board
+
+    for i in range(3):
+        x_left = left_start - i * (window_width + 20)
+        x_right = right_start + i * (window_width + 20)
+        for x in [x_left, x_right]:
+            pygame.draw.rect(screen, (180, 220, 255), (x, window_y, window_width, window_height))
+            pygame.draw.rect(screen, (100, 100, 100), (x, window_y, window_width, window_height), 3)
+            pygame.draw.line(screen, (220, 240, 255), (x + window_width // 2, window_y), (x + window_width // 2, window_y + window_height), 2)
+            pygame.draw.line(screen, (220, 240, 255), (x, window_y + window_height // 2), (x + window_width, window_y + window_height // 2), 2)
+
+    door_width = 100
+    door_height = 220
+    door_x = 50
+    door_y = floor_y - door_height
+    pygame.draw.rect(screen, (120, 90, 40), (door_x, door_y, door_width, door_height))
+    pygame.draw.rect(screen, (60, 40, 20), (door_x + 10, door_y + 80, 20, 20))
+
+    light_color = (255, 255, 210)
+    pygame.draw.rect(screen, light_color, (WIDTH // 4 - 80, 20, 160, 15))
+    pygame.draw.rect(screen, light_color, (3 * WIDTH // 4 - 80, 20, 160, 15))
+
+    # Clock above the chalkboard
+    clock_radius = 30
+    clock_x = chalkboard_x + chalkboard_width // 2
+    clock_y = chalkboard_y - 60
+    pygame.draw.circle(screen, (255, 255, 255), (clock_x, clock_y), clock_radius)
+    pygame.draw.circle(screen, (0, 0, 0), (clock_x, clock_y), clock_radius, 2)
+    pygame.draw.line(screen, (0, 0, 0), (clock_x, clock_y), (clock_x, clock_y - 15), 2)  # hour hand
+    pygame.draw.line(screen, (0, 0, 0), (clock_x, clock_y), (clock_x + 15, clock_y), 2)  # minute hand
+
+def drawGameOver():
+    red_overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+    red_overlay.fill((255, 0, 0, 100))
+    screen.blit(red_overlay, (0, 0))
+
+    text_surface = pygame.font.SysFont(None, 100).render('CAUGHT CHEATING!', True, (255, 0, 0))
+    screen.blit(text_surface, text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50)))
+    subtext = font.render("Click anywhere to try again!", True, (255, 255, 255))
+    screen.blit(subtext, subtext.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 20)))
+
+def drawScore():
+    text_surface = font.render('Score: ' + str(score), True, (255, 255, 255))
+    screen.blit(text_surface, (WIDTH / 2, 200))
+
+def drawMainMenu():
+    title_font = pygame.font.SysFont(None, 120)
+    title_surface = title_font.render("Sneak Cheat", True, (255, 255, 255))
+    screen.blit(title_surface, title_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 100)))
+
+    subtitle = font.render("Click anywhere to start cheating!", True, (200, 200, 200))
+    screen.blit(subtitle, subtitle.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 20)))
+
 # --- Game Loop ---
 while running:
-    clock.tick(FPS)  # Limit frame rate
+    clock.tick(FPS)
 
-    # --- Event Handling ---
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if musicNotStarted:
+            mixer.set_music(start=True)
+            musicNotStarted = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if mainMenu:
+                startGame()
+                mixer.set_music(isPlaying=True)
+            elif gameOver:
+                isTeacherLooking = False
+                startGame() # need to figure this out 
+                musicNotStarted = True
+                mixer.stop_music()
+                mixer.yell(stop=True)
+               
 
+    if playingGame and pygame.mouse.get_pressed(3)[0]:
+        if musicNotStarted:
+            mixer.set_music(isPlaying=True)
+            musicNotStarted = False
+    
     if playingGame and pygame.mouse.get_pressed(3)[0] == True:
         isCheating = True
+
         score += 1
+       
+        if not wasClicking:
+            mixer.writing(volume=1.0)
+            wasClicking = True
+            
     else:
+        isCheating = False
+        if wasClicking:
+            mixer.writing(stop=True)
+            wasClicking = False
+            
         isCheating = False    
 
-    # --- Game Logic ---
-    # Update your game state here
-    
     if isCheating and isTeacherLooking:
+        mixer.writing(stop=True)
+        mixer.yell()
+        mixer.set_music(gameOver=True)
         gameOver = True
         playingGame = False
 
-
     if playingGame and not isTeacherLooking:
         if safeTime <= 0:
-           isTeacherLooking = True
-           setTeacherTime()
-        else: 
+
+            isTeacherLooking = True
+            setTeacherTime()
+        else:
             safeTime -= 1
+            if safeTime <= warningTime:
+                showWarning = True
+                teacherBlinking = True
+                blinkCounter += 1
+
     elif playingGame and isTeacherLooking:
         if teacherTime <= 0:
             isTeacherLooking = False
+            
             setSafeTime()
         else:
             teacherTime -= 1
 
-    # --- Drawing ---
     screen.fill(BG_COLOR)
-    # Draw your game elements here
-    if playingGame:
-        drawTeacher()
+
+    drawClassroom()
+    drawEmptyDesks()
+    drawTeacher()
+    drawStudent()
+
+    if mainMenu:
+        drawMainMenu()
+    elif playingGame:
         drawScore()
     elif gameOver:
         drawGameOver()
         drawScore()
 
-    pygame.display.flip()  # Update the screen
+    pygame.display.flip()
 
 # --- Clean Up ---
 pygame.quit()
