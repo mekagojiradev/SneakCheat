@@ -247,6 +247,7 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if mainMenu:
                 startGame()
+                mixer.ring_bell(volume=.1)
                 mixer.set_music(isPlaying=True)
             elif gameOver:
                 mixer.stop_music()
@@ -268,6 +269,7 @@ while running:
 
     if playingGame and pygame.mouse.get_pressed(3)[0]:
         if musicNotStarted:
+            
             mixer.set_music(isPlaying=True)
             musicNotStarted = False
     
