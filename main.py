@@ -2,7 +2,6 @@ import pygame
 import sys
 import random
 import sound
-import time
 
 # --- Initialization ---
 pygame.init()
@@ -257,6 +256,7 @@ while running:
                     startGame() # need to figure this out 
                     musicNotStarted = True
                     mixer.set_music(isPlaying=True)
+                    mixer.ring_bell()
                 elif event.button == 3: # right-click
                     drawMainMenu()
                     musicNotStarted = False
