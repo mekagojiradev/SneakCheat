@@ -1,6 +1,8 @@
 import pygame
 import sys
 import random
+import sound
+import time
 
 # --- Initialization ---
 pygame.init()
@@ -31,6 +33,9 @@ warningTime = 0
 showWarning = False
 teacherBlinking = False
 blinkCounter = 0
+mixer = sound.Mixer()
+wasClicking = False
+musicNotStarted = True
 
 # Shirt colors used for background students
 shirt_colors = [
@@ -230,12 +235,31 @@ while running:
                 startGame()
 
     if playingGame and pygame.mouse.get_pressed(3)[0]:
+        if musicNotStarted:
+            mixer.set_music()
+            musicNotStarted = False
+    
+    if playingGame and pygame.mouse.get_pressed(3)[0] == True:
         isCheating = True
+
         score += 1
+       
+        if not wasClicking:
+            mixer.writing(volume=1.0)
+            wasClicking = True
+            
     else:
         isCheating = False
+        if wasClicking:
+            mixer.writing(stop=True)
+            wasClicking = False
+        isCheating = False    
 
     if isCheating and isTeacherLooking:
+        mixer.writing(stop=True)
+        mixer.yell()
+        mixer.set_music(gameOver=True)
+        time.sleep(2)
         gameOver = True
         playingGame = False
 
