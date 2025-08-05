@@ -3,6 +3,7 @@ import sys
 import random
 import sound
 import button
+from player import Player
 
 # --- Initialization ---
 pygame.init()
@@ -34,7 +35,14 @@ showWarning = False
 teacherBlinking = False
 blinkCounter = 0
 mixer = sound.Mixer()
+YELL_VOLUME = 0.3
 DIR = 'assets/buttons/'
+leaderBoard = [Player('Satan', 9999), 
+                    Player('Dunkey', 7880), 
+                    Player('Tony Shalhob', 5500),
+                    Player('Carrot Top', 4709),
+                    Player('Shania Twain', 1000)]
+
 
 wasClicking = False
 musicNotStarted = True
@@ -103,8 +111,15 @@ def startMenu():
     score = 0
     setSafeTime()
    
+# Will Use Pygbag to check cache for previous data   
+def setLeaderBoard():
+    global leaderBoard 
+    leaderBoard = ([Player('Satan', 9999), 
+                    Player('Dunkey', 7880), 
+                    Player('Tony Shalhob', 5500),
+                    Player('Carrot Top', 4709),
+                    Player('Shania Twain', 1000)])
     
-
 def drawTeacher():
     teacher_x = WIDTH // 2 - 30
     floor_y = int(HEIGHT * 0.65)
@@ -252,7 +267,23 @@ def drawMainMenu():
     startButton.draw()
     quitButton.draw()
 
-
+def drawLeaderboard(score: int, board: list = leaderBoard, x: int =(WIDTH / 2) , y: int = (HEIGHT /2) - 120 , length: int=5) -> None:
+    # Draw header
+    small_font = pygame.font.SysFont("Courier New", 18)
+    text_surface = small_font.render(f'{"Top Students":<15}{"Scores":<10}', True, (255, 255, 255))
+    screen.blit(text_surface, (x,y))
+    y+=5
+    # if score > min(board):
+    #     board[board.find(min(board))] = Player("CHEATER", score)
+    # board.sort(reverse=True) 
+    
+    for i in range(length):
+        y += 20
+        text_surface = small_font.render(f'{board[i]}', True, (255, 255, 255))
+        screen.blit(text_surface, (x,y))
+            
+   
+    
     
 
 # --- Game Loop ---
@@ -268,20 +299,21 @@ while running:
             
         if event.type == pygame.MOUSEBUTTONDOWN:
             if mainMenu and startButton.draw():
-                quitButton.draw(hide=True)
+                quitButton.draw(hide=True)  # might not be necessary
                 startGame()
                 mixer.ring_bell(volume=.1)
                 mixer.set_music(isPlaying=True)
+                setLeaderBoard()
             elif gameOver:
                 
-                if tryAgainButton.draw(): # left-click
-                    startGame() # need to figure this out 
+                if tryAgainButton.draw():
+                    startGame() 
                     mixer.yell(stop=True)
                     isTeacherLooking = False
                     musicNotStarted = True
                     mixer.set_music(isPlaying=True)
                     mixer.ring_bell()
-                elif menuButton.draw(): # right-click
+                elif menuButton.draw(): 
                     drawMainMenu()
                     mixer.yell(stop=True)
                     isTeacherLooking = False
@@ -318,7 +350,7 @@ while running:
 
     if isCheating and isTeacherLooking:
         mixer.writing(stop=True)
-        mixer.yell()
+        mixer.yell(volume=YELL_VOLUME)
         mixer.set_music(gameOver=True)
         gameOver = True
         playingGame = False
@@ -353,6 +385,7 @@ while running:
     if mainMenu:
         drawMainMenu()
     elif playingGame:
+        drawLeaderboard(score)
         drawScore()
     elif gameOver:
         drawGameOver()

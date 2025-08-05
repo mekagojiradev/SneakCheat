@@ -14,7 +14,7 @@ class Mixer:
         self.mixer.music.load(self.menu_music)
         
         self.pencil = self.mixer.Sound(f'{Mixer.DIR}writing-pencil.wav')
-        self.teacher = self.mixer.Sound(f'{Mixer.DIR}male-yelling.wav') 
+        self.teacher = self.mixer.Sound(f'{Mixer.DIR}male_yelling_reverb.wav') 
         self.bell = self.mixer.Sound(f'{Mixer.DIR}bell.wav') 
     
     def set_music(self, start: bool = False, gameOver: bool = False, isPlaying: bool = False) -> None:
