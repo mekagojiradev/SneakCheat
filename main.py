@@ -264,16 +264,18 @@ while running:
                 mixer.ring_bell(volume=.1)
                 mixer.set_music(isPlaying=True)
             elif gameOver:
-                mixer.stop_music()
-                mixer.yell(stop=True)
-                isTeacherLooking = False
+                
                 if tryAgainButton.draw(): # left-click
                     startGame() # need to figure this out 
+                    mixer.yell(stop=True)
+                    isTeacherLooking = False
                     musicNotStarted = True
                     mixer.set_music(isPlaying=True)
                     mixer.ring_bell()
                 elif menuButton.draw(): # right-click
                     drawMainMenu()
+                    mixer.yell(stop=True)
+                    isTeacherLooking = False
                     musicNotStarted = False
                     mixer.set_music(start=True)
                     startMenu()
