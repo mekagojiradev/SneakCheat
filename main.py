@@ -303,7 +303,7 @@ def drawMoney():
     if score // testTimeForMoney > timesAllowanceApplied:
         timesAllowanceApplied += 1
         money += 5
-        mixer.cha_ching(volume=.6)
+        mixer.cha_ching(volume=.5)
         # play sound
     text_surface = font.render('Money: $' + str(money), True, (255, 255, 255))
     screen.blit(text_surface, ((WIDTH / 2) - 220, (HEIGHT /2) - 80 ))
