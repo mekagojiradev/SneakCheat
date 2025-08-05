@@ -41,7 +41,7 @@ leaderBoard = [Player('Satan', 9999),
                     Player('Dunkey', 7880), 
                     Player('Tony Shalhoub', 5500),
                     Player('Carrot Top', 4709),
-                    Player('Shania Twain', 1000)]
+                    Player('Shania Twain', 100)]
 
 
 wasClicking = False
@@ -284,10 +284,10 @@ def drawLeaderboard(score: int, board: list = leaderBoard, x: int =(WIDTH / 2) ,
         text_surface = small_font.render(f'{board[i]}', True, (255, 255, 255))
         screen.blit(text_surface, (x,y))
 
-def updateLeaderboard(score: int, board: list = leaderBoard, length:int =5):
+def updateLeaderboard(score: int, board: list = leaderBoard):
     
     if score > min(board):
-        board[board.find(min(board))] = Player("CHEATER", score)
+        board[board.index(min(board))] = Player("CHEATER", score)
     board.sort(reverse=True) 
     pass  
    
@@ -383,6 +383,7 @@ while running:
         drawLeaderboard(score)
         drawScore()
     elif gameOver:
+        updateLeaderboard(score)
         drawGameOver()
         drawScore()
 
