@@ -260,7 +260,7 @@ while running:
     clock.tick(FPS)
 
     for event in pygame.event.get():
-        if event.type == pygame.QUIT or quitButton.draw():
+        if event.type == pygame.QUIT or (mainMenu and quitButton.draw()):
             running = False
         if musicNotStarted:
             mixer.set_music(start=True)
@@ -268,6 +268,7 @@ while running:
             
         if event.type == pygame.MOUSEBUTTONDOWN:
             if mainMenu and startButton.draw():
+                quitButton.draw(hide=True)
                 startGame()
                 mixer.ring_bell(volume=.1)
                 mixer.set_music(isPlaying=True)

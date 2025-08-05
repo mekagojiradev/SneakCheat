@@ -20,7 +20,9 @@ class Button():
         self.rect.center = (x,y)
         self.clicked = False
        
-    def draw(self) -> bool:
+    def draw(self, hide: bool=False) -> bool:
+        if hide:
+            return False
         pos = pygame.mouse.get_pos()
         
         if self.rect.collidepoint(pos):
