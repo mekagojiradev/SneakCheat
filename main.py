@@ -159,7 +159,7 @@ def drawTeacher():
         warning_font = pygame.font.SysFont(None, 50)
         warning_surface = warning_font.render('!', True, (255, 0, 0))
         
-        screen.blit(warning_surface, (teacher_x + 50, teacher_y - 30))
+        screen.blit(warning_surface, (teacher_x - 5, teacher_y - 30))
     elif not isTeacherLooking:
         sleeping_font = pygame.font.SysFont(None, 50)
         sleeping_surface = sleeping_font.render('zZz', True, (0, 0, 255))
