@@ -84,6 +84,9 @@ quit_img_alt = pygame.image.load(f'{DIR}quit_w.jpeg').convert_alpha()
 shop_img_w = pygame.image.load(f'{DIR}shop_w.jpeg').convert_alpha() 
 shop_img_r = pygame.image.load(f'{DIR}shop_r.jpeg').convert_alpha() 
 
+#SHop
+
+
 startButton = button.Button(screen, start_img, x=WIDTH//2,y=(2/3)*HEIGHT, scale=0.3, image_alt=start_img_alt)
 quitButton = button.Button(screen, quit_img_blk, x=WIDTH//2,y=(2/3)*HEIGHT + 100, scale=0.4, image_alt=quit_img_alt) 
 
