@@ -218,7 +218,7 @@ def drawGameOver():
 
 def drawScore():
     text_surface = font.render('Score: ' + str(score), True, (255, 255, 255))
-    screen.blit(text_surface, (WIDTH / 2 - 100, 200))
+    screen.blit(text_surface, (WIDTH / 2 - 250, 300))
 
 def drawMoney():
     global money
@@ -227,7 +227,7 @@ def drawMoney():
         timesAllowanceApplied += 1
         money += 5
     text_surface = font.render('Money: $' + str(money), True, (255, 255, 255))
-    screen.blit(text_surface, (WIDTH / 2 + 200, 200))
+    screen.blit(text_surface, (WIDTH / 2 + 130, 300))
 
 def drawMainMenu():
     title_font = pygame.font.SysFont(None, 120)
