@@ -59,8 +59,12 @@ menu_btn_img_blk = pygame.image.load(f'{DIR}main_menu_blk.jpeg').convert_alpha()
 menu_btn_img_alt = pygame.image.load(f'{DIR}main_menu_w.jpeg').convert_alpha() 
 try_again_img_blk = pygame.image.load(f'{DIR}try_again_blk.jpeg').convert_alpha()
 try_again_img_alt = pygame.image.load(f'{DIR}try_again_w.jpeg').convert_alpha()
+quit_img_blk = pygame.image.load(f'{DIR}quit_b.jpeg').convert_alpha()
+quit_img_alt = pygame.image.load(f'{DIR}quit_w.jpeg').convert_alpha()
 
 startButton = button.Button(screen, start_img, x=WIDTH//2,y=(2/3)*HEIGHT, scale=0.3, image_alt=start_img_alt)
+quitButton = button.Button(screen, quit_img_blk, x=WIDTH//2,y=(2/3)*HEIGHT + 100, scale=0.4, image_alt=quit_img_alt) 
+
 menuButton = button.Button(screen, menu_btn_img_blk, x=WIDTH//2 - 200,y=(2/3)*HEIGHT, scale=0.3, image_alt=menu_btn_img_alt) 
 tryAgainButton = button.Button(screen, try_again_img_blk, x=WIDTH//2 + 200,y=(2/3)*HEIGHT, scale=0.3, image_alt=try_again_img_alt) 
 
@@ -246,13 +250,17 @@ def drawMainMenu():
     title_surface = title_font.render("Sneak Cheat", True, (255, 255, 255))
     screen.blit(title_surface, title_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 100)))
     startButton.draw()
+    quitButton.draw()
+
+
+    
 
 # --- Game Loop ---
 while running:
     clock.tick(FPS)
 
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT or quitButton.draw():
             running = False
         if musicNotStarted:
             mixer.set_music(start=True)
