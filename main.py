@@ -21,6 +21,9 @@ safeTimeMax = 8 * FPS
 teacherTimeMin = 2 * FPS
 teacherTimeMax = 10 * FPS
 score = 0
+money = 0
+testTimeForMoney = 15 * FPS
+timesAllowanceApplied = 0
 running = True
 isTeacherLooking = False
 isCheating = False
@@ -98,12 +101,16 @@ def setTeacherTime():
 
 def startGame():
 
-    global mainMenu, playingGame, score, gameOver, isTeacherLooking
+    global mainMenu, playingGame, score, money, timesAllowanceApplied, gameOver, isTeacherLooking
+
 
     mainMenu = False
     playingGame = True
     gameOver = False
     score = 0
+    money = 0
+    timesAllowanceApplied = 0
+
     isTeacherLooking = False
     
     setSafeTime()
@@ -179,7 +186,7 @@ def drawStudent():
     
     # Highlights the desk when cheating
     if isCheating:
-        pygame.draw.rect(screen, (255, 255, 100), (student_x, student_y + 50, 120, 20), 5)
+        pygame.draw.rect(screen, (255, 255, 100), (student_x, student_y + 50, (score % testTimeForMoney)//(testTimeForMoney/120), 20), 5)
 
 def drawEmptyDesks():
     desk_width = 120
@@ -274,7 +281,18 @@ def drawGameOver():
 
 def drawScore():
     text_surface = font.render('Score: ' + str(score), True, (255, 255, 255))
+
     screen.blit(text_surface, ((WIDTH / 2) - 220 , (HEIGHT /2) - 130 ))
+
+def drawMoney():
+    global money
+    global timesAllowanceApplied
+    if score // testTimeForMoney > timesAllowanceApplied:
+        timesAllowanceApplied += 1
+        money += 5
+    text_surface = font.render('Money: $' + str(money), True, (255, 255, 255))
+    screen.blit(text_surface, (WIDTH / 2 + 130, 300))
+
 
 def drawMainMenu():
     title_font = pygame.font.SysFont("Arial Black", 120)
@@ -389,6 +407,7 @@ while running:
     elif playingGame:
         drawLeaderboard(score)
         drawScore()
+        drawMoney()
     elif gameOver:
         updateLeaderboard(score)
         drawGameOver()
