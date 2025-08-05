@@ -39,8 +39,8 @@ mixer = sound.Mixer()
 YELL_VOLUME = 0.3
 DIR = 'assets/buttons/'
 leaderBoard = [Player('Satan', 9999), 
-                    Player('Dunkey',4880), 
-                    Player('Tony Shalhoub', 3500),
+                    Player('Rihanna',4880), 
+                    Player('Dunkey', 3500),
                     Player('Carrot Top', 1450),
                     Player('Shania Twain', 500)]
 
@@ -121,8 +121,8 @@ def startMenu():
 def setLeaderBoard():
     global leaderBoard 
     leaderBoard = [Player('Satan', 9999), 
-                    Player('Dunkey',4880), 
-                    Player('Tony Shalhoub', 3500),
+                    Player('Rihanna',4880), 
+                    Player('Dunkey', 3500),
                     Player('Carrot Top', 1450),
                     Player('Shania Twain', 500)]
     
@@ -156,8 +156,7 @@ def drawTeacher():
     if showWarning and blinkCounter % 30 < 15:
         warning_font = pygame.font.SysFont(None, 50)
         warning_surface = warning_font.render('!', True, (255, 0, 0))
-        screen.blit(warning_surface, (teacher_x + 50, teacher_y - 30))
-
+        screen.blit(warning_surface, (teacher_x - 5, teacher_y - 30)) # was teacher_x + 50
 def drawStudent():
     student_x = WIDTH // 2 - 300
     student_y = int(HEIGHT * 0.65) + 80
@@ -264,7 +263,7 @@ def drawGameOver():
 
 def drawScore():
     text_surface = font.render('Score: ' + str(score), True, (255, 255, 255))
-    screen.blit(text_surface, ((WIDTH / 2) -220, (HEIGHT /2) - 120 ))
+    screen.blit(text_surface, ((WIDTH / 2) - 220 , (HEIGHT /2) - 130 ))
 
 def drawMainMenu():
     title_font = pygame.font.SysFont("Arial Black", 120)
@@ -275,7 +274,7 @@ def drawMainMenu():
     quitButton.draw()
     
 
-def drawLeaderboard(score: int, board: list = leaderBoard, x: int =(WIDTH / 2) , y: int = (HEIGHT /2) - 120 , length: int=5) -> None:
+def drawLeaderboard(score: int, board: list = leaderBoard, x: int =(WIDTH / 2)   , y: int = (HEIGHT /2) - 130 , length: int=5) -> None:
     # Draw header
     
     text_surface = small_font.render(f'{"Top Students":<15}{"Scores":<10}', True, (255, 255, 255))
