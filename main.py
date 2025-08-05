@@ -30,8 +30,12 @@ isCheating = False
 mainMenu = True
 playingGame = False
 gameOver = False
+
+# Fonts
 font = pygame.font.SysFont("Courier New", 25)
 small_font = pygame.font.SysFont("Courier New", 18)
+sleeping_font = pygame.font.SysFont(None, 35)
+
 background_occupied = []
 background_colors = []
 warningTime = 0
@@ -67,18 +71,26 @@ pygame.display.set_caption("Sneak Cheat")
 # Create Buttons
 start_img = pygame.image.load(f'{DIR}start_button.jpeg').convert_alpha()
 start_img_alt = pygame.image.load(f'{DIR}start_button_white.jpeg').convert_alpha()
+
 menu_btn_img_blk = pygame.image.load(f'{DIR}main_menu_blk.jpeg').convert_alpha() 
 menu_btn_img_alt = pygame.image.load(f'{DIR}main_menu_w.jpeg').convert_alpha() 
+
 try_again_img_blk = pygame.image.load(f'{DIR}try_again_blk.jpeg').convert_alpha()
 try_again_img_alt = pygame.image.load(f'{DIR}try_again_w.jpeg').convert_alpha()
+
 quit_img_blk = pygame.image.load(f'{DIR}quit_b.jpeg').convert_alpha()
 quit_img_alt = pygame.image.load(f'{DIR}quit_w.jpeg').convert_alpha()
+
+shop_img_w = pygame.image.load(f'{DIR}shop_w.jpeg').convert_alpha() 
+shop_img_r = pygame.image.load(f'{DIR}shop_r.jpeg').convert_alpha() 
 
 startButton = button.Button(screen, start_img, x=WIDTH//2,y=(2/3)*HEIGHT, scale=0.3, image_alt=start_img_alt)
 quitButton = button.Button(screen, quit_img_blk, x=WIDTH//2,y=(2/3)*HEIGHT + 100, scale=0.4, image_alt=quit_img_alt) 
 
 menuButton = button.Button(screen, menu_btn_img_blk, x=WIDTH//2 - 200,y=(2/3)*HEIGHT, scale=0.3, image_alt=menu_btn_img_alt) 
 tryAgainButton = button.Button(screen, try_again_img_blk, x=WIDTH//2 + 200,y=(2/3)*HEIGHT, scale=0.3, image_alt=try_again_img_alt) 
+
+shopButton = button.Button(screen, shop_img_w, x=WIDTH//2,y=(2/3)*HEIGHT + 250, scale=0.3, image_alt=shop_img_r)  
 
 
 # Clock for controlling frame rate
@@ -116,6 +128,7 @@ def startGame():
     setSafeTime()
     mixer.ring_bell(volume=.1)
     mixer.set_music(isPlaying=True)
+
     
 def startMenu():
     global mainMenu, playingGame, score, gameOver, isTeacherLooking
@@ -126,6 +139,7 @@ def startMenu():
     score = 0
     setSafeTime()
     mixer.set_music(start=True)
+
    
 # Will Use Pygbag to check cache for previous data   
 def setLeaderBoard():
@@ -168,9 +182,8 @@ def drawTeacher():
         
         screen.blit(warning_surface, (teacher_x - 5, teacher_y - 30))
     elif not isTeacherLooking:
-        sleeping_font = pygame.font.SysFont(None, 50)
         sleeping_surface = sleeping_font.render('zZz', True, (0, 0, 255))
-        screen.blit(sleeping_surface, (teacher_x-5, teacher_y - 40))
+        screen.blit(sleeping_surface, (teacher_x-5, teacher_y - 25))
 
 
 def drawStudent():
@@ -249,7 +262,7 @@ def drawClassroom():
             pygame.draw.line(screen, (220, 240, 255), (x, window_y + window_height // 2), (x + window_width, window_y + window_height // 2), 2)
 
     door_width = 100
-    door_height = 220
+    door_height = 22
     door_x = 50
     door_y = floor_y - door_height
     pygame.draw.rect(screen, (120, 90, 40), (door_x, door_y, door_width, door_height))
@@ -290,8 +303,9 @@ def drawMoney():
     if score // testTimeForMoney > timesAllowanceApplied:
         timesAllowanceApplied += 1
         money += 5
+        # play sound
     text_surface = font.render('Money: $' + str(money), True, (255, 255, 255))
-    screen.blit(text_surface, (WIDTH / 2 + 130, 300))
+    screen.blit(text_surface, ((WIDTH / 2) - 220, (HEIGHT /2) - 80 ))
 
 
 def drawMainMenu():
@@ -351,7 +365,7 @@ while running:
                     startMenu()
                     
     
-    if playingGame and pygame.mouse.get_pressed(3)[0] == True:
+    if playingGame and pygame.mouse.get_pressed(3)[0] and not shopButton.draw():
         isCheating = True
 
         score += 1
@@ -368,7 +382,7 @@ while running:
             
         isCheating = False    
 
-    if isCheating and isTeacherLooking:
+    if isCheating and isTeacherLooking and not shopButton.draw():
         mixer.writing(stop=True)
         mixer.yell(volume=YELL_VOLUME)
         mixer.set_music(gameOver=True)
@@ -401,17 +415,21 @@ while running:
     drawEmptyDesks()
     drawTeacher()
     drawStudent()
+    
 
     if mainMenu:
         drawMainMenu()
+        shopButton.draw() # Change this to display shop button at diff time
     elif playingGame:
         drawLeaderboard(score)
         drawScore()
         drawMoney()
+        shopButton.draw() # Change this to display shop button at diff time
     elif gameOver:
         updateLeaderboard(score)
         drawGameOver()
         drawScore()
+        shopButton.draw() # Change this to display shop button at diff time
     # Display the back buffer
     pygame.display.flip()
 
