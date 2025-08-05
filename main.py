@@ -100,11 +100,16 @@ def drawTeacher():
     elif teacherBlinking and blinkCounter % 30 < 15:
         pygame.draw.circle(screen, (0, 0, 0), (teacher_x + 20, teacher_y + 15), 4)
         pygame.draw.circle(screen, (0, 0, 0), (teacher_x + 40, teacher_y + 15), 4)
+    
 
     if showWarning and blinkCounter % 30 < 15:
         warning_font = pygame.font.SysFont(None, 50)
         warning_surface = warning_font.render('!', True, (255, 0, 0))
         screen.blit(warning_surface, (teacher_x + 50, teacher_y - 30))
+    else:
+        sleeping_font = pygame.font.SysFont(None, 50)
+        sleeping_surface = sleeping_font.render('zZz', True, (0, 0, 255))
+        screen.blit(sleeping_surface, (teacher_x, teacher_y - 40))
 
 def drawStudent():
     student_x = WIDTH // 2 - 300
