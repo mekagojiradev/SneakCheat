@@ -70,17 +70,11 @@ def setTeacherTime():
 
 def startGame():
     global mainMenu, playingGame, score, gameOver
-    global isTeacherLooking, teacherBlinking, showWarning, blinkCounter
 
     mainMenu = False
     playingGame = True
     gameOver = False
     score = 0
-    
-    isTeacherLooking = False
-    teacherBlinking = False
-    showWarning = False
-    blinkCounter = 0
     
     setSafeTime()
 
