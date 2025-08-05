@@ -11,6 +11,7 @@ class Mixer:
         self.menu_music = f'{Mixer.DIR}start_menu.wav'
         self.game_music = f'{Mixer.DIR}game_music.mp3'
         self.game_over = f'{Mixer.DIR}beatz.wav'
+        self.shop_music = f'{Mixer.DIR}shop_music.wav'
         self.mixer.music.load(self.menu_music)
         
         self.pencil = self.mixer.Sound(f'{Mixer.DIR}writing-pencil.wav')
@@ -18,7 +19,7 @@ class Mixer:
         self.bell = self.mixer.Sound(f'{Mixer.DIR}bell.wav') 
         self.money = self.mixer.Sound(f'{Mixer.DIR}cha_ching.wav')
     
-    def set_music(self, start: bool = False, gameOver: bool = False, isPlaying: bool = False) -> None:
+    def set_music(self, start: bool = False, gameOver: bool = False, isPlaying: bool = False, isShop: bool = False) -> None:
         if start:
             self.mixer.music.load(self.menu_music)
             self.mixer.music.play(-1)
@@ -28,6 +29,10 @@ class Mixer:
         if isPlaying:
             self.mixer.music.load(self.game_music)
             self.mixer.music.play(-1)
+        if isShop:
+            self.mixer.music.load(self.shop_music)
+            self.mixer.music.play(-1)
+            
             
     def stop_music(self) -> None:
         self.mixer.music.stop()

@@ -365,8 +365,9 @@ while running:
                     mixer.yell(stop=True)
                     startMenu()
                     
-    
-    if playingGame and pygame.mouse.get_pressed()[0] and not shopButton.draw():
+    if playingGame and shopButton.draw():
+        mixer.set_music(isShop=True)
+    if not shopButton.draw() and playingGame and pygame.mouse.get_pressed()[0]:
         isCheating = True
 
         score += 1
