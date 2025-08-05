@@ -56,11 +56,13 @@ pygame.display.set_caption("Sneak Cheat")
 start_img = pygame.image.load(f'{DIR}start_button.jpeg').convert_alpha()
 start_img_alt = pygame.image.load(f'{DIR}start_button_white.jpeg').convert_alpha()
 menu_btn_img_blk = pygame.image.load(f'{DIR}main_menu_blk.jpeg').convert_alpha() 
+menu_btn_img_alt = pygame.image.load(f'{DIR}main_menu_w.jpeg').convert_alpha() 
 try_again_img_blk = pygame.image.load(f'{DIR}try_again_blk.jpeg').convert_alpha()
+try_again_img_alt = pygame.image.load(f'{DIR}try_again_w.jpeg').convert_alpha()
 
-startButton = button.Button(screen, start_img, x=WIDTH//2,y=(2/3)*HEIGHT, scale=0.3)
-menuButton = button.Button(screen, menu_btn_img_blk, x=WIDTH//2 - 200,y=(2/3)*HEIGHT, scale=0.3) 
-tryAgainButton = button.Button(screen, try_again_img_blk, x=WIDTH//2 + 200,y=(2/3)*HEIGHT, scale=0.3) 
+startButton = button.Button(screen, start_img, x=WIDTH//2,y=(2/3)*HEIGHT, scale=0.3, image_alt=start_img_alt)
+menuButton = button.Button(screen, menu_btn_img_blk, x=WIDTH//2 - 200,y=(2/3)*HEIGHT, scale=0.3, image_alt=menu_btn_img_alt) 
+tryAgainButton = button.Button(screen, try_again_img_blk, x=WIDTH//2 + 200,y=(2/3)*HEIGHT, scale=0.3, image_alt=try_again_img_alt) 
 
 
 # Clock for controlling frame rate
@@ -231,10 +233,6 @@ def drawGameOver():
 
     text_surface = pygame.font.SysFont(None, 100).render('CAUGHT CHEATING!', True, (255, 0, 0))
     screen.blit(text_surface, text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50)))
-    # subtext = font.render("Left-Click to Try Again!", True, (255, 255, 255))
-    # subtext1 = font.render("Right-Click to Quit!", True, (255, 255, 255))
-    # screen.blit(subtext, subtext.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 20)))
-    # screen.blit(subtext1, subtext.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 60)))
     menuButton.draw()
     tryAgainButton.draw()
     
@@ -247,9 +245,6 @@ def drawMainMenu():
     title_font = pygame.font.SysFont("Arial Black", 120)
     title_surface = title_font.render("Sneak Cheat", True, (255, 255, 255))
     screen.blit(title_surface, title_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 100)))
-
-    subtitle = font.render("Click Start to Cheat", True, (200, 200, 200))
-    screen.blit(subtitle, subtitle.get_rect(center=((WIDTH // 2), (HEIGHT // 2) + 200)))
     startButton.draw()
 
 # --- Game Loop ---
