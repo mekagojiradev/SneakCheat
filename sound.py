@@ -16,6 +16,7 @@ class Mixer:
         self.pencil = self.mixer.Sound(f'{Mixer.DIR}writing-pencil.wav')
         self.teacher = self.mixer.Sound(f'{Mixer.DIR}male_yelling_reverb.wav') 
         self.bell = self.mixer.Sound(f'{Mixer.DIR}bell.wav') 
+        self.money = self.mixer.Sound(f'{Mixer.DIR}cha_ching.wav')
     
     def set_music(self, start: bool = False, gameOver: bool = False, isPlaying: bool = False) -> None:
         if start:
@@ -46,3 +47,8 @@ class Mixer:
         if volume:
             self.bell.set_volume(volume)
         self.bell.play() if not stop else self.pencil.stop()
+        
+    def cha_ching(self, volume: float = None, stop: bool = False):
+        if volume:
+            self.money.set_volume(volume)
+        self.money.play() if not stop else self.money.stop()

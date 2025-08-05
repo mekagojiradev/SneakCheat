@@ -303,6 +303,7 @@ def drawMoney():
     if score // testTimeForMoney > timesAllowanceApplied:
         timesAllowanceApplied += 1
         money += 5
+        mixer.cha_ching(volume=.6)
         # play sound
     text_surface = font.render('Money: $' + str(money), True, (255, 255, 255))
     screen.blit(text_surface, ((WIDTH / 2) - 220, (HEIGHT /2) - 80 ))
@@ -365,7 +366,7 @@ while running:
                     startMenu()
                     
     
-    if playingGame and pygame.mouse.get_pressed(3)[0] and not shopButton.draw():
+    if playingGame and pygame.mouse.get_pressed()[0] and not shopButton.draw():
         isCheating = True
 
         score += 1
@@ -419,7 +420,7 @@ while running:
 
     if mainMenu:
         drawMainMenu()
-        shopButton.draw() # Change this to display shop button at diff time
+        # shopButton.draw() # Change this to display shop button at diff time
     elif playingGame:
         drawLeaderboard(score)
         drawScore()
@@ -429,7 +430,7 @@ while running:
         updateLeaderboard(score)
         drawGameOver()
         drawScore()
-        shopButton.draw() # Change this to display shop button at diff time
+        # shopButton.draw() # Change this to display shop button at diff time
     # Display the back buffer
     pygame.display.flip()
 
