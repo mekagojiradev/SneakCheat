@@ -32,7 +32,7 @@ class Button():
         if not pygame.mouse.get_pressed()[0]:
             self.clicked = False       
             
-        self.screen.blit(self.image, (self.rect.x, self.rect.y)) if isShop or not self.rect.collidepoint(pos) else None 
+        self.screen.blit(self.image, (self.rect.x, self.rect.y)) if not self.rect.collidepoint(pos) else None 
         return False
         
         
