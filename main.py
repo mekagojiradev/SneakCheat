@@ -20,6 +20,9 @@ safeTimeMax = 8 * FPS
 teacherTimeMin = 2 * FPS
 teacherTimeMax = 10 * FPS
 score = 0
+money = 0
+testTimeForMoney = 15 * FPS
+timesAllowanceApplied = 0
 running = True
 isTeacherLooking = False
 isCheating = False
@@ -69,11 +72,13 @@ def setTeacherTime():
     teacherTime = random.randint(teacherTimeMin, teacherTimeMax)
 
 def startGame():
-    global mainMenu, playingGame, score, gameOver
+    global mainMenu, playingGame, score, money, timesAllowanceApplied, gameOver
     mainMenu = False
     playingGame = True
     gameOver = False
     score = 0
+    money = 0
+    timesAllowanceApplied = 0
     setSafeTime()
 
 def drawTeacher():
@@ -120,7 +125,7 @@ def drawStudent():
     pygame.draw.rect(screen, (255, 224, 189), (student_x + 45, student_y - 30, 30, 30))
 
     if isCheating:
-        pygame.draw.rect(screen, (255, 255, 100), (student_x, student_y + 50, 120, 20), 5)
+        pygame.draw.rect(screen, (255, 255, 100), (student_x, student_y + 50, (score % testTimeForMoney)//(testTimeForMoney/120), 20), 5)
 
 def drawEmptyDesks():
     desk_width = 120
@@ -213,7 +218,16 @@ def drawGameOver():
 
 def drawScore():
     text_surface = font.render('Score: ' + str(score), True, (255, 255, 255))
-    screen.blit(text_surface, (WIDTH / 2, 200))
+    screen.blit(text_surface, (WIDTH / 2 - 100, 200))
+
+def drawMoney():
+    global money
+    global timesAllowanceApplied
+    if score // testTimeForMoney > timesAllowanceApplied:
+        timesAllowanceApplied += 1
+        money += 5
+    text_surface = font.render('Money: $' + str(money), True, (255, 255, 255))
+    screen.blit(text_surface, (WIDTH / 2 + 200, 200))
 
 def drawMainMenu():
     title_font = pygame.font.SysFont(None, 120)
@@ -305,6 +319,7 @@ while running:
         drawMainMenu()
     elif playingGame:
         drawScore()
+        drawMoney()
     elif gameOver:
         drawGameOver()
         drawScore()
