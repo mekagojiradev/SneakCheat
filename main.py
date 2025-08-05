@@ -2,6 +2,7 @@ import pygame
 import sys
 import random
 import sound
+import button
 
 # --- Initialization ---
 pygame.init()
@@ -33,6 +34,8 @@ showWarning = False
 teacherBlinking = False
 blinkCounter = 0
 mixer = sound.Mixer()
+DIR = 'assets/buttons/'
+
 wasClicking = False
 musicNotStarted = True
 
@@ -48,6 +51,17 @@ shirt_colors = [
 # Create the display
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Sneak Cheat")
+
+# Create Buttons
+start_img = pygame.image.load(f'{DIR}start_button.jpeg').convert_alpha()
+start_img_alt = pygame.image.load(f'{DIR}start_button_white.jpeg').convert_alpha()
+menu_btn_img_blk = pygame.image.load(f'{DIR}main_menu_blk.jpeg').convert_alpha() 
+try_again_img_blk = pygame.image.load(f'{DIR}try_again_blk.jpeg').convert_alpha()
+
+startButton = button.Button(screen, start_img, x=WIDTH//2,y=(2/3)*HEIGHT, scale=0.3)
+menuButton = button.Button(screen, menu_btn_img_blk, x=WIDTH//2 - 200,y=(2/3)*HEIGHT, scale=0.3) 
+tryAgainButton = button.Button(screen, try_again_img_blk, x=WIDTH//2 + 200,y=(2/3)*HEIGHT, scale=0.3) 
+
 
 # Clock for controlling frame rate
 clock = pygame.time.Clock()
@@ -82,6 +96,7 @@ def startMenu():
     gameOver = False
     score = 0
     setSafeTime()
+   
     
 
 def drawTeacher():
@@ -216,22 +231,26 @@ def drawGameOver():
 
     text_surface = pygame.font.SysFont(None, 100).render('CAUGHT CHEATING!', True, (255, 0, 0))
     screen.blit(text_surface, text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50)))
-    subtext = font.render("Left-Click to Try Again!", True, (255, 255, 255))
-    subtext1 = font.render("Right-Click to Quit!", True, (255, 255, 255))
-    screen.blit(subtext, subtext.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 20)))
-    screen.blit(subtext1, subtext.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 60)))
+    # subtext = font.render("Left-Click to Try Again!", True, (255, 255, 255))
+    # subtext1 = font.render("Right-Click to Quit!", True, (255, 255, 255))
+    # screen.blit(subtext, subtext.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 20)))
+    # screen.blit(subtext1, subtext.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 60)))
+    menuButton.draw()
+    tryAgainButton.draw()
+    
 
 def drawScore():
     text_surface = font.render('Score: ' + str(score), True, (255, 255, 255))
-    screen.blit(text_surface, (WIDTH / 2, 200))
+    screen.blit(text_surface, ((WIDTH / 2) -220, (HEIGHT /2) - 120 ))
 
 def drawMainMenu():
-    title_font = pygame.font.SysFont(None, 120)
+    title_font = pygame.font.SysFont("Arial Black", 120)
     title_surface = title_font.render("Sneak Cheat", True, (255, 255, 255))
     screen.blit(title_surface, title_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 100)))
 
-    subtitle = font.render("Click anywhere to start cheating!", True, (200, 200, 200))
-    screen.blit(subtitle, subtitle.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 20)))
+    subtitle = font.render("Click Start to Cheat", True, (200, 200, 200))
+    screen.blit(subtitle, subtitle.get_rect(center=((WIDTH // 2), (HEIGHT // 2) + 200)))
+    startButton.draw()
 
 # --- Game Loop ---
 while running:
@@ -243,8 +262,9 @@ while running:
         if musicNotStarted:
             mixer.set_music(start=True)
             musicNotStarted = False
+            
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if mainMenu:
+            if mainMenu and startButton.draw():
                 startGame()
                 mixer.ring_bell(volume=.1)
                 mixer.set_music(isPlaying=True)
@@ -252,12 +272,12 @@ while running:
                 mixer.stop_music()
                 mixer.yell(stop=True)
                 isTeacherLooking = False
-                if event.button ==1: # left-click
+                if tryAgainButton.draw(): # left-click
                     startGame() # need to figure this out 
                     musicNotStarted = True
                     mixer.set_music(isPlaying=True)
                     mixer.ring_bell()
-                elif event.button == 3: # right-click
+                elif menuButton.draw(): # right-click
                     drawMainMenu()
                     musicNotStarted = False
                     mixer.set_music(start=True)
