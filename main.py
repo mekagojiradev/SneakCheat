@@ -2,7 +2,8 @@ import pygame
 import sys
 import random
 import sound
-import time
+import button
+from player import Player
 
 # --- Initialization ---
 pygame.init()
@@ -26,7 +27,8 @@ isCheating = False
 mainMenu = True
 playingGame = False
 gameOver = False
-font = pygame.font.SysFont(None, 36)
+font = pygame.font.SysFont("Courier New", 25)
+small_font = pygame.font.SysFont("Courier New", 18)
 background_occupied = []
 background_colors = []
 warningTime = 0
@@ -34,6 +36,15 @@ showWarning = False
 teacherBlinking = False
 blinkCounter = 0
 mixer = sound.Mixer()
+YELL_VOLUME = 0.3
+DIR = 'assets/buttons/'
+leaderBoard = [Player('Satan', 9999), 
+                    Player('Rihanna',4880), 
+                    Player('Dunkey', 3500),
+                    Player('Carrot Top', 1450),
+                    Player('Shania Twain', 500)]
+
+
 wasClicking = False
 musicNotStarted = True
 
@@ -49,6 +60,23 @@ shirt_colors = [
 # Create the display
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Sneak Cheat")
+
+# Create Buttons
+start_img = pygame.image.load(f'{DIR}start_button.jpeg').convert_alpha()
+start_img_alt = pygame.image.load(f'{DIR}start_button_white.jpeg').convert_alpha()
+menu_btn_img_blk = pygame.image.load(f'{DIR}main_menu_blk.jpeg').convert_alpha() 
+menu_btn_img_alt = pygame.image.load(f'{DIR}main_menu_w.jpeg').convert_alpha() 
+try_again_img_blk = pygame.image.load(f'{DIR}try_again_blk.jpeg').convert_alpha()
+try_again_img_alt = pygame.image.load(f'{DIR}try_again_w.jpeg').convert_alpha()
+quit_img_blk = pygame.image.load(f'{DIR}quit_b.jpeg').convert_alpha()
+quit_img_alt = pygame.image.load(f'{DIR}quit_w.jpeg').convert_alpha()
+
+startButton = button.Button(screen, start_img, x=WIDTH//2,y=(2/3)*HEIGHT, scale=0.3, image_alt=start_img_alt)
+quitButton = button.Button(screen, quit_img_blk, x=WIDTH//2,y=(2/3)*HEIGHT + 100, scale=0.4, image_alt=quit_img_alt) 
+
+menuButton = button.Button(screen, menu_btn_img_blk, x=WIDTH//2 - 200,y=(2/3)*HEIGHT, scale=0.3, image_alt=menu_btn_img_alt) 
+tryAgainButton = button.Button(screen, try_again_img_blk, x=WIDTH//2 + 200,y=(2/3)*HEIGHT, scale=0.3, image_alt=try_again_img_alt) 
+
 
 # Clock for controlling frame rate
 clock = pygame.time.Clock()
@@ -69,13 +97,35 @@ def setTeacherTime():
     teacherTime = random.randint(teacherTimeMin, teacherTimeMax)
 
 def startGame():
-    global mainMenu, playingGame, score, gameOver
+    global mainMenu, playingGame, score, gameOver, isTeacherLooking
     mainMenu = False
     playingGame = True
     gameOver = False
     score = 0
+    isTeacherLooking = False
     setSafeTime()
-
+    mixer.ring_bell(volume=.1)
+    mixer.set_music(isPlaying=True)
+    
+def startMenu():
+    global mainMenu, playingGame, score, gameOver, isTeacherLooking
+    mainMenu = True
+    playingGame = False
+    gameOver = False
+    isTeacherLooking = False
+    score = 0
+    setSafeTime()
+    mixer.set_music(start=True)
+   
+# Will Use Pygbag to check cache for previous data   
+def setLeaderBoard():
+    global leaderBoard 
+    leaderBoard = [Player('Satan', 9999), 
+                    Player('Rihanna',4880), 
+                    Player('Dunkey', 3500),
+                    Player('Carrot Top', 1450),
+                    Player('Shania Twain', 500)]
+    
 def drawTeacher():
     teacher_x = WIDTH // 2 - 30
     floor_y = int(HEIGHT * 0.65)
@@ -106,8 +156,7 @@ def drawTeacher():
     if showWarning and blinkCounter % 30 < 15:
         warning_font = pygame.font.SysFont(None, 50)
         warning_surface = warning_font.render('!', True, (255, 0, 0))
-        screen.blit(warning_surface, (teacher_x + 50, teacher_y - 30))
-
+        screen.blit(warning_surface, (teacher_x - 5, teacher_y - 30)) # was teacher_x + 50
 def drawStudent():
     student_x = WIDTH // 2 - 300
     student_y = int(HEIGHT * 0.65) + 80
@@ -208,47 +257,70 @@ def drawGameOver():
 
     text_surface = pygame.font.SysFont(None, 100).render('CAUGHT CHEATING!', True, (255, 0, 0))
     screen.blit(text_surface, text_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50)))
-    subtext = font.render("Click anywhere to try again!", True, (255, 255, 255))
-    screen.blit(subtext, subtext.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 20)))
+    menuButton.draw()
+    tryAgainButton.draw()
+    
 
 def drawScore():
     text_surface = font.render('Score: ' + str(score), True, (255, 255, 255))
-    screen.blit(text_surface, (WIDTH / 2, 200))
+    screen.blit(text_surface, ((WIDTH / 2) - 220 , (HEIGHT /2) - 130 ))
 
 def drawMainMenu():
-    title_font = pygame.font.SysFont(None, 120)
+    title_font = pygame.font.SysFont("Arial Black", 120)
     title_surface = title_font.render("Sneak Cheat", True, (255, 255, 255))
     screen.blit(title_surface, title_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 100)))
+    
+    startButton.draw()
+    quitButton.draw()
+    
 
-    subtitle = font.render("Click anywhere to start cheating!", True, (200, 200, 200))
-    screen.blit(subtitle, subtitle.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 20)))
+def drawLeaderboard(score: int, board: list = leaderBoard, x: int =(WIDTH / 2)   , y: int = (HEIGHT /2) - 130 , length: int=5) -> None:
+    # Draw header
+    
+    text_surface = small_font.render(f'{"Top Students":<15}{"Scores":<10}', True, (255, 255, 255))
+    screen.blit(text_surface, (x,y))
+    y+=5
+    
+    for i in range(length):
+        y += 20
+        text_surface = small_font.render(f'{board[i]}', True, (255, 255, 255))
+        screen.blit(text_surface, (x,y))
+
+def updateLeaderboard(score: int, board: list = leaderBoard):
+    
+    if score > min(board):
+        board[board.index(min(board))] = Player("CHEATER", score)
+    board.sort(reverse=True) 
+    pass  
+   
+    
+    
 
 # --- Game Loop ---
 while running:
     clock.tick(FPS)
 
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT or (mainMenu and quitButton.draw()):
             running = False
         if musicNotStarted:
+            setLeaderBoard()
             mixer.set_music(start=True)
             musicNotStarted = False
+            
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if mainMenu:
-                startGame()
-                mixer.set_music(isPlaying=True)
+            if mainMenu and startButton.draw():
+                startGame()  
             elif gameOver:
-                isTeacherLooking = False
-                startGame() # need to figure this out 
-                musicNotStarted = True
-                mixer.stop_music()
-                mixer.yell(stop=True)
-               
-
-    if playingGame and pygame.mouse.get_pressed(3)[0]:
-        if musicNotStarted:
-            mixer.set_music(isPlaying=True)
-            musicNotStarted = False
+                if tryAgainButton.draw():
+                    startGame() 
+                    mixer.yell(stop=True)
+                    
+                elif menuButton.draw(): 
+                    drawMainMenu()
+                    mixer.yell(stop=True)
+                    startMenu()
+                    
     
     if playingGame and pygame.mouse.get_pressed(3)[0] == True:
         isCheating = True
@@ -269,7 +341,7 @@ while running:
 
     if isCheating and isTeacherLooking:
         mixer.writing(stop=True)
-        mixer.yell()
+        mixer.yell(volume=YELL_VOLUME)
         mixer.set_music(gameOver=True)
         gameOver = True
         playingGame = False
@@ -304,8 +376,10 @@ while running:
     if mainMenu:
         drawMainMenu()
     elif playingGame:
+        drawLeaderboard(score)
         drawScore()
     elif gameOver:
+        updateLeaderboard(score)
         drawGameOver()
         drawScore()
 

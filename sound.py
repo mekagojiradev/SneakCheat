@@ -14,7 +14,8 @@ class Mixer:
         self.mixer.music.load(self.menu_music)
         
         self.pencil = self.mixer.Sound(f'{Mixer.DIR}writing-pencil.wav')
-        self.teacher = self.mixer.Sound(f'{Mixer.DIR}male-yelling.wav') 
+        self.teacher = self.mixer.Sound(f'{Mixer.DIR}male_yelling_reverb.wav') 
+        self.bell = self.mixer.Sound(f'{Mixer.DIR}bell.wav') 
     
     def set_music(self, start: bool = False, gameOver: bool = False, isPlaying: bool = False) -> None:
         if start:
@@ -37,7 +38,11 @@ class Mixer:
         self.teacher.play() if not stop else self.teacher.stop()
     
     def writing(self, volume: float = None, stop: bool = False):
-        if volume and volume > 0:
-            volume = min(float(volume), 1.0)
+        if volume:
             self.pencil.set_volume(volume)
         self.pencil.play(-1) if not stop else self.pencil.stop()
+        
+    def ring_bell(self, volume: float = None, stop: bool = False):
+        if volume:
+            self.bell.set_volume(volume)
+        self.bell.play() if not stop else self.pencil.stop()
