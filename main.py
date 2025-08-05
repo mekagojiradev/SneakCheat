@@ -70,10 +70,18 @@ def setTeacherTime():
 
 def startGame():
     global mainMenu, playingGame, score, gameOver
+    global isTeacherLooking, teacherBlinking, showWarning, blinkCounter
+
     mainMenu = False
     playingGame = True
     gameOver = False
     score = 0
+    
+    isTeacherLooking = False
+    teacherBlinking = False
+    showWarning = False
+    blinkCounter = 0
+    
     setSafeTime()
 
 def drawTeacher():
@@ -81,6 +89,7 @@ def drawTeacher():
     floor_y = int(HEIGHT * 0.65)
     teacher_y = floor_y - 140
 
+    # Change the teachers shirt if they are looking from green to red
     body_color = (255, 0, 0) if isTeacherLooking else (0, 128, 0)
 
     pygame.draw.rect(screen, (255, 224, 189), (teacher_x + 10, teacher_y, 40, 40))
@@ -106,7 +115,7 @@ def drawTeacher():
         warning_font = pygame.font.SysFont(None, 50)
         warning_surface = warning_font.render('!', True, (255, 0, 0))
         screen.blit(warning_surface, (teacher_x + 50, teacher_y - 30))
-    else:
+    elif not isTeacherLooking:
         sleeping_font = pygame.font.SysFont(None, 50)
         sleeping_surface = sleeping_font.render('zZz', True, (0, 0, 255))
         screen.blit(sleeping_surface, (teacher_x, teacher_y - 40))
@@ -121,7 +130,8 @@ def drawStudent():
 
     pygame.draw.rect(screen, (0, 0, 255), (student_x + 40, student_y, 40, 50))
     pygame.draw.rect(screen, (255, 224, 189), (student_x + 45, student_y - 30, 30, 30))
-
+    
+    # Highlights the desk when cheating
     if isCheating:
         pygame.draw.rect(screen, (255, 255, 100), (student_x, student_y + 50, 120, 20), 5)
 
@@ -142,7 +152,7 @@ def drawEmptyDesks():
         pygame.draw.rect(screen, (139, 69, 19), (x, y, desk_width, desk_height))
         pygame.draw.rect(screen, (139, 69, 19), (x, y + desk_height, leg_width, leg_height))
         pygame.draw.rect(screen, (139, 69, 19), (x + desk_width - leg_width, y + desk_height, leg_width, leg_height))
-
+        # Randomly places the background students
         if background_occupied[i]:
             drawBackgroundStudent(x, y, background_colors[i])
 
@@ -175,6 +185,7 @@ def drawClassroom():
     left_start = chalkboard_x - window_width - spacing_from_board
     right_start = chalkboard_x + chalkboard_width + spacing_from_board
 
+    # Draw the windows to the left and right of the chalkboard
     for i in range(3):
         x_left = left_start - i * (window_width + 20)
         x_right = right_start + i * (window_width + 20)
@@ -299,7 +310,7 @@ while running:
     elif gameOver:
         drawGameOver()
         drawScore()
-
+    # Display the back buffer
     pygame.display.flip()
 
 # --- Clean Up ---
