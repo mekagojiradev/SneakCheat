@@ -27,7 +27,8 @@ isCheating = False
 mainMenu = True
 playingGame = False
 gameOver = False
-font = pygame.font.SysFont(None, 36)
+font = pygame.font.SysFont("Courier New", 25)
+small_font = pygame.font.SysFont("Courier New", 18)
 background_occupied = []
 background_colors = []
 warningTime = 0
@@ -38,10 +39,10 @@ mixer = sound.Mixer()
 YELL_VOLUME = 0.3
 DIR = 'assets/buttons/'
 leaderBoard = [Player('Satan', 9999), 
-                    Player('Dunkey', 7880), 
-                    Player('Tony Shalhoub', 5500),
-                    Player('Carrot Top', 4709),
-                    Player('Shania Twain', 100)]
+                    Player('Dunkey',4880), 
+                    Player('Tony Shalhoub', 3500),
+                    Player('Carrot Top', 1450),
+                    Player('Shania Twain', 500)]
 
 
 wasClicking = False
@@ -119,11 +120,11 @@ def startMenu():
 # Will Use Pygbag to check cache for previous data   
 def setLeaderBoard():
     global leaderBoard 
-    leaderBoard = ([Player('Satan', 9999), 
-                    Player('Dunkey', 7880), 
-                    Player('Tony Shalhob', 5500),
-                    Player('Carrot Top', 4709),
-                    Player('Shania Twain', 1000)])
+    leaderBoard = [Player('Satan', 9999), 
+                    Player('Dunkey',4880), 
+                    Player('Tony Shalhoub', 3500),
+                    Player('Carrot Top', 1450),
+                    Player('Shania Twain', 500)]
     
 def drawTeacher():
     teacher_x = WIDTH // 2 - 30
@@ -269,12 +270,14 @@ def drawMainMenu():
     title_font = pygame.font.SysFont("Arial Black", 120)
     title_surface = title_font.render("Sneak Cheat", True, (255, 255, 255))
     screen.blit(title_surface, title_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 100)))
+    
     startButton.draw()
     quitButton.draw()
+    
 
 def drawLeaderboard(score: int, board: list = leaderBoard, x: int =(WIDTH / 2) , y: int = (HEIGHT /2) - 120 , length: int=5) -> None:
     # Draw header
-    small_font = pygame.font.SysFont("Courier New", 18)
+    
     text_surface = small_font.render(f'{"Top Students":<15}{"Scores":<10}', True, (255, 255, 255))
     screen.blit(text_surface, (x,y))
     y+=5
@@ -308,21 +311,15 @@ while running:
             
         if event.type == pygame.MOUSEBUTTONDOWN:
             if mainMenu and startButton.draw():
-                startGame()
-                
-                
+                startGame()  
             elif gameOver:
-                
                 if tryAgainButton.draw():
                     startGame() 
                     mixer.yell(stop=True)
-                    # isTeacherLooking = False
-                    
                     
                 elif menuButton.draw(): 
                     drawMainMenu()
                     mixer.yell(stop=True)
-                    # isTeacherLooking = False
                     startMenu()
                     
     
