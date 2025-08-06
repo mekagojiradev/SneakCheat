@@ -98,9 +98,12 @@ pencil_img = pygame.image.load(f'{DIR}pencil.png').convert_alpha()
 tests_img = pygame.image.load(f'{DIR}tests.png').convert_alpha() 
 glasses_img = pygame.image.load(f'{DIR}glasses.png').convert_alpha() 
 ai_img = pygame.image.load(f'{DIR}ai.png').convert_alpha() 
-shop_bg = pygame.image.load(f"{DIR}shop_back.png").convert()
+# ALTS
+pencil_img_out = pygame.image.load(f'{DIR}pencil_out.png').convert_alpha() 
+tests_img_out = pygame.image.load(f'{DIR}tests_out.png').convert_alpha() 
+glasses_img_out = pygame.image.load(f'{DIR}glasses_out.png').convert_alpha() 
+ai_img_out = pygame.image.load(f'{DIR}ai_out.png').convert_alpha() 
 
-shop_bg = pygame.transform.scale(shop_bg,screen.get_size())
 
 pencil = button.Button(screen, pencil_img, x=WIDTH//3-300,y=(2/3)*HEIGHT , scale=2, image_alt=pencil_img)  
 tests = button.Button(screen, tests_img, x=WIDTH//2-450,y=(1/4)*HEIGHT , scale=2, image_alt=tests_img)  
@@ -203,8 +206,9 @@ def setLeaderBoard():
                     Player('Carrot Top', 1450),
                     Player('Shania Twain', 500)]
 
+# Draw shop
 def drawShop():
-    global inShop
+    global inShop, pencil, glasses, ai_hat, tests, exitButton
   
     shopButton.draw(hide=True)
     shop_overlay = pygame.Surface((WIDTH-400, HEIGHT-400))
@@ -214,44 +218,91 @@ def drawShop():
     shop_overlay.fill((15, 80, 25))
     screen.blit(shop_overlay, (200, 210))
     
-    # exitButton.draw()
-    # drawShop()
+   
+   
+    # afford messafe
+    not_afford = font.render("Can't Afford!", True, (255, 255, 255))
+    not_afford_rect = not_afford.get_rect(center=(885 + 75, 500))  # center of the 150x65 box
+    nice = font.render("       Nice!        ", True, (255, 255, 255))
+    nice_rect = nice.get_rect(center=(885 + 75, 500))
+    
+  
     if pencil.draw():
-        buyPencil()
-        # inShop = False
-        # resumeGame()
+    
+        if buyPencil():    
+            pencil = button.Button(screen, pencil_img_out, x=WIDTH//3-300,y=(2/3)*HEIGHT , scale=2, image_alt=pencil_img_out) 
+            screen.blit(nice, nice_rect) 
+            mixer.cha_ching(volume=.5)
+        else:
+            # print cant afford
+            # pencil = button.Button(screen, pencil_img_out, x=WIDTH//3-300,y=(2/3)*HEIGHT , scale=2, image_alt=pencil_img_out)  
+            screen.blit(not_afford, not_afford_rect) if not pencilBought else None
+
     if glasses.draw():
-        buyGlasses()
-        # inShop = False
-        # resumeGame()
+        
+        if buyGlasses():
+            screen.blit(nice, nice_rect) 
+            glasses = button.Button(screen, glasses_img_out, x=WIDTH//2+300,y=(1/4)*HEIGHT , scale=2, image_alt=glasses_img_out)
+            mixer.cha_ching(volume=.5)
+        else:
+            # cant afford
+            # glasses = button.Button(screen, glasses_img_out, x=WIDTH//2+300,y=(1/4)*HEIGHT , scale=2, image_alt=glasses_img_out)
+            screen.blit(not_afford, not_afford_rect) if not glassesBought else None
+            
+            
     if ai_hat.draw():
-        buyHat()
-        # inShop = False
-        # resumeGame()
+        
+        if buyHat():
+            screen.blit(nice, nice_rect) 
+            ai_hat = button.Button(screen, ai_img_out, x=WIDTH//2+300,y=(2/3)*HEIGHT , scale=2, image_alt=ai_img_out)
+            mixer.cha_ching(volume=.5)
+        else:
+            # can't afford
+            # ai_hat = button.Button(screen, ai_img_out, x=WIDTH//2+300,y=(2/3)*HEIGHT , scale=2, image_alt=ai_img_out)
+            screen.blit(not_afford, not_afford_rect) if not hatBought else None
+            
+            
     if tests.draw():
-        buyTest()
-        # inShop = False
-        # resumeGame()
+       
+        if buyTest():
+            screen.blit(nice, nice_rect) 
+            tests = button.Button(screen, tests_img_out, x=WIDTH//2-480,y=(1/4)*HEIGHT , scale=2, image_alt=tests_img_out)  
+            mixer.cha_ching(volume=.5)
+            
+        else:
+            # can't afford
+            # tests = button.Button(screen, tests_img_out, x=WIDTH//2-450,y=(1/4)*HEIGHT , scale=2, image_alt=tests_img_out)  
+            screen.blit(not_afford, not_afford_rect) if not testBought else None
+            
+      
 
     if exitButton.draw():
         inShop = False
         resumeGame()
     
 
-def buyHat():
+def buyHat()-> bool:
     global money, teacherTimeMin, teacherTimeMax, hatBought
     if money >= 7 and not hatBought:
         money -= 7
         teacherTimeMin = 1 * FPS
         teacherTimeMax = 7 * FPS
         hatBought = True
+        return True
+    return False
+        
+        
 
-def buyTest():
+def buyTest() -> bool:
     global money, scoreMultiplier, testBought
     if money >= 13 and not testBought:
         money -= 13
         scoreMultiplier *= 2
         testBought = True
+        return True
+    return False
+       
+        
 
 def buyPencil():
     global money, testTimeForMoney, pencilBought
@@ -259,6 +310,9 @@ def buyPencil():
         money -= 16
         testTimeForMoney = 10 * FPS
         pencilBought = True
+        return True
+    return False
+        
 
 def buyGlasses():
     global money, blinkMultiplier, glassesBought
@@ -266,6 +320,9 @@ def buyGlasses():
         money -=4
         blinkMultiplier = 2
         glassesBought = True
+        return True
+    return False
+       
 
 def drawTeacher():
     teacher_x = WIDTH // 2 - 30
@@ -387,10 +444,10 @@ def drawClassroom():
     
     # practice clicking square :)
     
-    pygame.draw.rect(screen, (128, 128, 128), (885, 885, 150, 65))
-    text_surface = font.render("Practice:)", True, (255, 255, 255))
-    text_rect = text_surface.get_rect(center=(885 + 75, 885 + 32))  # center of the 150x65 box
-    screen.blit(text_surface, text_rect)
+    # pygame.draw.rect(screen, (128, 128, 128), (885, 885, 150, 65))
+    # text_surface = font.render("Practice:)", True, (255, 255, 255))
+    # text_rect = text_surface.get_rect(center=(885 + 75, 885 + 32))  # center of the 150x65 box
+    # screen.blit(text_surface, text_rect)
 
     light_color = (255, 255, 210)
     pygame.draw.rect(screen, light_color, (WIDTH // 4 - 80, 20, 160, 15))
