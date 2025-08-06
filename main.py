@@ -12,6 +12,9 @@ pygame.init()
 WIDTH, HEIGHT = 1920, 1000
 FPS = 60
 BG_COLOR = (30, 30, 30)
+SHOP_MARGIN_RIGHT = 340
+SHOP_X = 260
+SHOP_WIDTH = WIDTH - SHOP_X - SHOP_MARGIN_RIGHT
 
 # Variables
 safeTime = 0
@@ -33,6 +36,7 @@ playingGame = False
 gameOver = False
 inShop = False
 justEnteredShop = False
+
 
 # Fonts
 font = pygame.font.SysFont("Courier New", 25)
@@ -102,10 +106,10 @@ shop_bg = pygame.image.load(f"{DIR}shop_back.png").convert()
 
 shop_bg = pygame.transform.scale(shop_bg,screen.get_size())
 
-pencil = button.Button(screen, pencil_img, x=WIDTH//3-300,y=(2/3)*HEIGHT , scale=2, image_alt=pencil_img)  
-tests = button.Button(screen, tests_img, x=WIDTH//2-450,y=(1/4)*HEIGHT , scale=2, image_alt=tests_img)  
-glasses = button.Button(screen, glasses_img, x=WIDTH//2+300,y=(1/4)*HEIGHT , scale=2, image_alt=glasses_img)  
-ai_hat = button.Button(screen, ai_img, x=WIDTH//2+300,y=(2/3)*HEIGHT , scale=2, image_alt=ai_img)  
+pencil = button.Button(screen, pencil_img, x=WIDTH//3-150,y=(2/3)*HEIGHT , scale=1, image_alt=pencil_img)  
+tests = button.Button(screen, tests_img, x=WIDTH//2-450,y=(2/5)*HEIGHT , scale=1.3, image_alt=tests_img)  
+glasses = button.Button(screen, glasses_img, x=WIDTH//2+100,y=(2/5)*HEIGHT , scale=1.5, image_alt=glasses_img)  
+ai_hat = button.Button(screen, ai_img, x=WIDTH//2+100,y=(2/3)*HEIGHT , scale=1.5, image_alt=ai_img)  
 
 shopButton = button.Button(screen, shop_img_w, x=WIDTH//4,y=(2/3)*HEIGHT + 250, scale=0.3, image_alt=shop_img_r)  
 exitButton = button.Button(screen, exit_img_w, x=WIDTH//2,y=(2/3)*HEIGHT + 250, scale=0.3, image_alt=exit_img_r)  
@@ -207,15 +211,14 @@ def drawShop():
     global inShop
   
     shopButton.draw(hide=True)
-    shop_overlay = pygame.Surface((WIDTH-400, HEIGHT-400))
+    shop_overlay = pygame.Surface((SHOP_WIDTH, HEIGHT - 400))
     shop_overlay.fill((90, 60, 20))
-    screen.blit(shop_overlay, (200, 200))
-    shop_overlay = pygame.Surface((WIDTH-400, HEIGHT-420))
+    screen.blit(shop_overlay, (SHOP_X, 200))
+    # Foreground layer
+    shop_overlay = pygame.Surface((SHOP_WIDTH, HEIGHT - 420))
     shop_overlay.fill((15, 80, 25))
-    screen.blit(shop_overlay, (200, 210))
-    
-    # exitButton.draw()
-    # drawShop()
+    screen.blit(shop_overlay, (SHOP_X, 210))
+
     if pencil.draw():
         buyPencil()
         # inShop = False
