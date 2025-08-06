@@ -102,10 +102,10 @@ shop_bg = pygame.image.load(f"{DIR}shop_back.png").convert()
 
 shop_bg = pygame.transform.scale(shop_bg,screen.get_size())
 
-pencil = button.Button(screen, pencil_img, x=WIDTH//1.5-300,y=(2/3)*HEIGHT , scale=2, image_alt=pencil_img)  
-tests = button.Button(screen, tests_img, x=WIDTH//2-100,y=(2/3)*HEIGHT , scale=2, image_alt=tests_img)  
-glasses = button.Button(screen, glasses_img, x=WIDTH//2+100,y=(2/3)*HEIGHT , scale=2, image_alt=glasses_img)  
-ai_hat = button.Button(screen, ai_img, x=WIDTH//1.5+300,y=(2/3)*HEIGHT , scale=2, image_alt=ai_img)  
+pencil = button.Button(screen, pencil_img, x=WIDTH//3-300,y=(2/3)*HEIGHT , scale=2, image_alt=pencil_img)  
+tests = button.Button(screen, tests_img, x=WIDTH//2-450,y=(1/4)*HEIGHT , scale=2, image_alt=tests_img)  
+glasses = button.Button(screen, glasses_img, x=WIDTH//2+300,y=(1/4)*HEIGHT , scale=2, image_alt=glasses_img)  
+ai_hat = button.Button(screen, ai_img, x=WIDTH//2+300,y=(2/3)*HEIGHT , scale=2, image_alt=ai_img)  
 
 shopButton = button.Button(screen, shop_img_w, x=WIDTH//4,y=(2/3)*HEIGHT + 250, scale=0.3, image_alt=shop_img_r)  
 exitButton = button.Button(screen, exit_img_w, x=WIDTH//2,y=(2/3)*HEIGHT + 250, scale=0.3, image_alt=exit_img_r)  
@@ -375,6 +375,8 @@ def drawClassroom():
     door_y = floor_y - door_height
     pygame.draw.rect(screen, (120, 90, 40), (door_x, door_y, door_width, door_height))
     pygame.draw.rect(screen, (60, 40, 20), (door_x + 10, door_y + 80, 20, 20))
+    
+    # pygame.draw.rect(screen, (128,128,128), ())
 
     light_color = (255, 255, 210)
     pygame.draw.rect(screen, light_color, (WIDTH // 4 - 80, 20, 160, 15))
