@@ -235,7 +235,7 @@ def drawShop():
     nice_rect = nice.get_rect(center=(885 + 75, 500))
     
   
-
+    
     screen.blit(shop_overlay, (SHOP_X, 210))
 
 
