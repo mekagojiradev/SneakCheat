@@ -62,7 +62,10 @@ leaderBoard = [Player('Satan', 9999),
                     Player('Dunkey', 3500),
                     Player('Carrot Top', 1450),
                     Player('Shania Twain', 500)]
-
+shopPrices = [('Last Years Tests', '$13'),
+              ('Faster Writing Pencil', '$16'),
+              ('Academic Integrity Hat', '$7'),
+              ('Shady Glasses', '$4')]
 
 wasClicking = False
 musicNotStarted = True
@@ -102,17 +105,18 @@ pencil_img = pygame.image.load(f'{DIR}pencil.png').convert_alpha()
 tests_img = pygame.image.load(f'{DIR}tests.png').convert_alpha() 
 glasses_img = pygame.image.load(f'{DIR}glasses.png').convert_alpha() 
 ai_img = pygame.image.load(f'{DIR}ai.png').convert_alpha() 
+shop_bg = pygame.image.load(f"{DIR}shop_back.png").convert()
+
+shop_bg = pygame.transform.scale(shop_bg,screen.get_size())
 # ALTS
 pencil_img_out = pygame.image.load(f'{DIR}pencil_out.png').convert_alpha() 
 tests_img_out = pygame.image.load(f'{DIR}tests_out.png').convert_alpha() 
 glasses_img_out = pygame.image.load(f'{DIR}glasses_out.png').convert_alpha() 
 ai_img_out = pygame.image.load(f'{DIR}ai_out.png').convert_alpha() 
-
-
 pencil = button.Button(screen, pencil_img, x=WIDTH//3-150,y=(2/3)*HEIGHT , scale=1, image_alt=pencil_img)  
 tests = button.Button(screen, tests_img, x=WIDTH//2-450,y=(2/5)*HEIGHT , scale=1.3, image_alt=tests_img)  
-glasses = button.Button(screen, glasses_img, x=WIDTH//2+100,y=(2/5)*HEIGHT , scale=1.5, image_alt=glasses_img)  
-ai_hat = button.Button(screen, ai_img, x=WIDTH//2+100,y=(2/3)*HEIGHT , scale=1.5, image_alt=ai_img)  
+glasses = button.Button(screen, glasses_img, x=WIDTH//2,y=(2/5)*HEIGHT , scale=1.5, image_alt=glasses_img)  
+ai_hat = button.Button(screen, ai_img, x=WIDTH//2,y=(2/3)*HEIGHT , scale=1.5, image_alt=ai_img)  
 
 shopButton = button.Button(screen, shop_img_w, x=WIDTH//4,y=(2/3)*HEIGHT + 250, scale=0.3, image_alt=shop_img_r)  
 exitButton = button.Button(screen, exit_img_w, x=WIDTH//2,y=(2/3)*HEIGHT + 250, scale=0.3, image_alt=exit_img_r)  
@@ -123,7 +127,7 @@ quitButton = button.Button(screen, quit_img_blk, x=WIDTH//2,y=(2/3)*HEIGHT + 100
 menuButton = button.Button(screen, menu_btn_img_blk, x=WIDTH//2 - 200,y=(2/3)*HEIGHT, scale=0.3, image_alt=menu_btn_img_alt) 
 tryAgainButton = button.Button(screen, try_again_img_blk, x=WIDTH//2 + 200,y=(2/3)*HEIGHT, scale=0.3, image_alt=try_again_img_alt) 
 
- 
+
 
 # Clock for controlling frame rate
 clock = pygame.time.Clock()
@@ -210,7 +214,6 @@ def setLeaderBoard():
                     Player('Carrot Top', 1450),
                     Player('Shania Twain', 500)]
 
-# Draw shop
 def drawShop():
     global inShop, pencil, glasses, ai_hat, tests, exitButton
   
@@ -284,34 +287,39 @@ def drawShop():
             screen.blit(not_afford, not_afford_rect) if not testBought else None
             
       
+    price_font = pygame.font.SysFont("Courier New", 26)
+    price_color = (255, 255, 255)  # Yellowish for visibility
+
+    price_start_x = SHOP_X + SHOP_WIDTH - 250  # Push prices toward right side
+    price_start_y = 240  # Start near top of chalkboard
+    line_spacing = 60  # Space between each line
+
+    for i, (item, price) in enumerate(shopPrices):
+        item_surface = price_font.render(f"{item}", True, (255, 255, 255))
+        price_surface = price_font.render(f"{price}", True, price_color)
+
+        screen.blit(item_surface, (price_start_x - 170, price_start_y + i * line_spacing))
+        screen.blit(price_surface, (price_start_x + 200, price_start_y + i * line_spacing))  # push $ amount further right
 
     if exitButton.draw():
         inShop = False
         resumeGame()
     
 
-def buyHat()-> bool:
+def buyHat():
     global money, teacherTimeMin, teacherTimeMax, hatBought
     if money >= 7 and not hatBought:
         money -= 7
         teacherTimeMin = 1 * FPS
         teacherTimeMax = 7 * FPS
         hatBought = True
-        return True
-    return False
-        
-        
 
-def buyTest() -> bool:
+def buyTest():
     global money, scoreMultiplier, testBought
     if money >= 13 and not testBought:
         money -= 13
         scoreMultiplier *= 2
         testBought = True
-        return True
-    return False
-       
-        
 
 def buyPencil():
     global money, testTimeForMoney, pencilBought
@@ -319,9 +327,6 @@ def buyPencil():
         money -= 16
         testTimeForMoney = 10 * FPS
         pencilBought = True
-        return True
-    return False
-        
 
 def buyGlasses():
     global money, blinkMultiplier, glassesBought
@@ -329,9 +334,6 @@ def buyGlasses():
         money -=4
         blinkMultiplier = 2
         glassesBought = True
-        return True
-    return False
-       
 
 def drawTeacher():
     teacher_x = WIDTH // 2 - 30
@@ -453,10 +455,10 @@ def drawClassroom():
     
     # practice clicking square :)
     
-    # pygame.draw.rect(screen, (128, 128, 128), (885, 885, 150, 65))
-    # text_surface = font.render("Practice:)", True, (255, 255, 255))
-    # text_rect = text_surface.get_rect(center=(885 + 75, 885 + 32))  # center of the 150x65 box
-    # screen.blit(text_surface, text_rect)
+    pygame.draw.rect(screen, (128, 128, 128), (885, 885, 150, 65))
+    text_surface = font.render("Practice:)", True, (255, 255, 255))
+    text_rect = text_surface.get_rect(center=(885 + 75, 885 + 32))  # center of the 150x65 box
+    screen.blit(text_surface, text_rect)
 
     light_color = (255, 255, 210)
     pygame.draw.rect(screen, light_color, (WIDTH // 4 - 80, 20, 160, 15))
