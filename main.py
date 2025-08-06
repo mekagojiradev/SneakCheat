@@ -262,7 +262,7 @@ def drawClassroom():
             pygame.draw.line(screen, (220, 240, 255), (x, window_y + window_height // 2), (x + window_width, window_y + window_height // 2), 2)
 
     door_width = 100
-    door_height = 22
+    door_height = 220
     door_x = 50
     door_y = floor_y - door_height
     pygame.draw.rect(screen, (120, 90, 40), (door_x, door_y, door_width, door_height))
