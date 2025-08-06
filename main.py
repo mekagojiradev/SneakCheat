@@ -213,7 +213,7 @@ def setShop() -> None:
 # Will Use Pygbag to check cache for previous data   
 def setLeaderBoard():
     global leaderBoard 
-    leaderBoard = [Player('Satan', 9999), 
+    leaderBoard = [Player('Robert Smith', 9999), 
                     Player('Rihanna',4880), 
                     Player('Dunkey', 3500),
                     Player('Carrot Top', 1450),
@@ -541,7 +541,7 @@ def drawLeaderboard(score: int, board: list = leaderBoard, x: int =(WIDTH / 2)  
 def updateLeaderboard(score: int, board: list = leaderBoard):
     
     if score > min(board):
-        board[board.index(min(board))] = Player("CHEATER", score)
+        board.append(Player("CHEATER", score))
     board.sort(reverse=True) 
     pass  
    
