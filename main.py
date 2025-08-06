@@ -252,7 +252,7 @@ def drawShop():
             mixer.cha_ching(volume=.5)
         else:
             # print cant afford
-            pencil = button.Button(screen, pencil_img_out, x=WIDTH//3-150,y=(2/3)*HEIGHT , scale=1, image_alt=pencil_img_out)  
+           
             screen.blit(not_afford, not_afford_rect) if not pencilBought else None
 
     if glasses.draw():
@@ -263,7 +263,7 @@ def drawShop():
             mixer.cha_ching(volume=.5)
         else:
             # cant afford
-            glasses = button.Button(screen, glasses_img_out, x=WIDTH//2,y=(2/5)*HEIGHT , scale=1.5, image_alt=glasses_img_out)
+            
             screen.blit(not_afford, not_afford_rect) if not glassesBought else None
             
             
@@ -275,7 +275,7 @@ def drawShop():
             mixer.cha_ching(volume=.5)
         else:
             # can't afford
-            ai_hat = button.Button(screen, ai_img_out, x=WIDTH//2,y=(2/3)*HEIGHT , scale=1.5, image_alt=ai_img_out)
+      
             screen.blit(not_afford, not_afford_rect) if not hatBought else None
             
             
@@ -288,7 +288,7 @@ def drawShop():
             
         else:
             # can't afford
-            tests = button.Button(screen, tests_img_out, x=WIDTH//2-480,y=(2/5)*HEIGHT - 15, scale=1.3, image_alt=tests_img_out)  
+           
             screen.blit(not_afford, not_afford_rect) if not testBought else None
             
       
