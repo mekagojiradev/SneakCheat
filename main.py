@@ -146,7 +146,7 @@ def startGame():
     playingGame = True
     gameOver = False
     score = 0
-    money = 0
+    money = 50
     timesAllowanceApplied = 0
     blinkMultiplier = 1
     scoreMultiplier = 1
@@ -168,7 +168,7 @@ def resumeGame():
     mainMenu = False
     playingGame = True
     gameOver = False
-    isTeacherLooking = False
+    #isTeacherLooking = False
     
     setSafeTime()
     mixer.set_music(isPlaying=True)
@@ -211,20 +211,12 @@ def drawShop():
     # drawShop()
     if pencil.draw():
         buyPencil()
-        inShop = False
-        resumeGame()
     if glasses.draw():
         buyGlasses()
-        inShop = False
-        resumeGame()
     if ai_hat.draw():
         buyHat()
-        inShop = False
-        resumeGame()
     if tests.draw():
         buyTest()
-        inShop = False
-        resumeGame()
     
     if exitButton.draw():
         inShop = False
@@ -233,29 +225,33 @@ def drawShop():
     
 
 def buyHat():
-    global money, teacherTimeMin, teacherTimeMax
-    if money >= 7:
+    global money, teacherTimeMin, teacherTimeMax, hatBought
+    if money >= 7 and not hatBought:
         money -= 7
         teacherTimeMin = 1 * FPS
         teacherTimeMax = 7 * FPS
+        hatBought = True
 
 def buyTest():
-    global money, scoreMultiplier
-    if money >= 13:
+    global money, scoreMultiplier, testBought
+    if money >= 13 and not testBought:
         money -= 13
         scoreMultiplier *= 2
+        testBought = True
 
 def buyPencil():
-    global money, testTimeForMoney
-    if money >= 16:
+    global money, testTimeForMoney, pencilBought
+    if money >= 16 and not pencilBought:
         money -= 16
         testTimeForMoney = 10 * FPS
+        pencilBought = True
 
 def buyGlasses():
-    global money, blinkMultiplier
-    if money >= 4:
+    global money, blinkMultiplier, glassesBought
+    if money >= 4 and not glassesBought:
         money -=4
         blinkMultiplier = 2
+        glassesBought = True
 
 def drawTeacher():
     teacher_x = WIDTH // 2 - 30
@@ -454,6 +450,7 @@ def updateLeaderboard(score: int, board: list = leaderBoard):
 while running:
     clock.tick(FPS)
 
+    print(pygame.mouse.get_pos())
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (mainMenu and quitButton.draw()):  # Get rid of this conditional and add logic to check if in window
             running = False
@@ -480,12 +477,11 @@ while running:
     # starts shop music and open shop menu                
     if playingGame and shopButton.draw(hide=inShop):
         setShop()
-        inShop = True
         
        
         
    
-    if not shopButton.draw(hide = inShop) and playingGame and pygame.mouse.get_pressed()[0]:
+    if playingGame and pygame.mouse.get_pressed()[0] and not(pygame.mouse.get_pos()[0] > 880 and pygame.mouse.get_pos()[0] < 1040 and pygame.mouse.get_pos()[1] < 950 and pygame.mouse.get_pos()[1] > 885):
         isCheating = True
 
         score += 1 * scoreMultiplier
@@ -502,7 +498,7 @@ while running:
             
         isCheating = False    
 
-    if isCheating and isTeacherLooking and not shopButton.draw( hide=inShop):
+    if isCheating and isTeacherLooking:
         mixer.writing(stop=True)
         mixer.yell(volume=YELL_VOLUME)
         mixer.set_music(gameOver=True)
