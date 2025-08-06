@@ -532,7 +532,7 @@ def drawLeaderboard(score: int, board: list = leaderBoard, x: int =(WIDTH / 2)  
     text_surface = small_font.render(f'{"Top Students":<15}{"Scores":<10}', True, (255, 255, 255))
     screen.blit(text_surface, (x,y))
     y+=5
-    print(board)
+   
     for i in range(length):
         y += 20
         text_surface = small_font.render(f'{board[i]}', True, (255, 255, 255))
@@ -544,7 +544,7 @@ def updateLeaderboard(score: int, board: list = leaderBoard):
         if Player('CHEATER', score) not in board:
                 board.append(Player("CHEATER", score))
     board.sort(reverse=True) 
-    print(board)
+   
     pass  
    
     
