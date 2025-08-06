@@ -97,11 +97,14 @@ pencil_img = pygame.image.load(f'{DIR}pencil.png').convert_alpha()
 tests_img = pygame.image.load(f'{DIR}tests.png').convert_alpha() 
 glasses_img = pygame.image.load(f'{DIR}glasses.png').convert_alpha() 
 ai_img = pygame.image.load(f'{DIR}ai.png').convert_alpha() 
+shop_bg = pygame.image.load(f"{DIR}shop_back.png").convert()
 
-pencil = button.Button(screen, pencil_img, x=WIDTH//2,y=(2/3)*HEIGHT , scale=10)  
-tests = button.Button(screen, tests_img, x=WIDTH//2,y=(2/3)*HEIGHT + 100, scale=0.03)  
-glasses = button.Button(screen, glasses_img, x=WIDTH//2,y=(2/3)*HEIGHT + 150, scale=0.03)  
-ai_hat = button.Button(screen, ai_img, x=WIDTH//2,y=(2/3)*HEIGHT + 200, scale=0.3)  
+shop_bg = pygame.transform.scale(shop_bg,screen.get_size())
+
+pencil = button.Button(screen, pencil_img, x=WIDTH//2-300,y=(2/3)*HEIGHT , scale=2, image_alt=pencil_img)  
+tests = button.Button(screen, tests_img, x=WIDTH//2-100,y=(2/3)*HEIGHT , scale=2, image_alt=tests_img)  
+glasses = button.Button(screen, glasses_img, x=WIDTH//2+100,y=(2/3)*HEIGHT , scale=2, image_alt=glasses_img)  
+ai_hat = button.Button(screen, ai_img, x=WIDTH//2+300,y=(2/3)*HEIGHT , scale=2, image_alt=ai_img)  
 
 shopButton = button.Button(screen, shop_img_w, x=WIDTH//2,y=(2/3)*HEIGHT + 250, scale=0.3, image_alt=shop_img_r)  
 exitButton = button.Button(screen, exit_img_w, x=WIDTH//2,y=(2/3)*HEIGHT + 250, scale=0.3, image_alt=exit_img_r)  
@@ -198,8 +201,33 @@ def setLeaderBoard():
                     Player('Shania Twain', 500)]
 
 def drawShop():
-    shop_bg = pygame.image.load(f"{DIR}shop_back.png").convert()
-    screen.blit(shop_bg,(0,0))
+    global inShop
+  
+    shopButton.draw(hide=True)
+    screen.fill("White")
+    
+    # exitButton.draw()
+    # drawShop()
+    if pencil.draw():
+        buyPencil()
+        inShop = False
+        resumeGame()
+    if glasses.draw():
+        buyGlasses()
+        inShop = False
+        resumeGame()
+    if ai_hat.draw():
+        buyHat()
+        inShop = False
+        resumeGame()
+    if tests.draw():
+        buyTest()
+        inShop = False
+        resumeGame()
+    
+    if exitButton.draw():
+        inShop = False
+        resumeGame()
     
     
 
@@ -394,7 +422,8 @@ def drawMainMenu():
     
     startButton.draw()
     quitButton.draw()
-    pencil.draw()
+   
+    
     
     
 
@@ -508,26 +537,8 @@ while running:
     
      # Logic for shop methods and conditionals    
     if inShop:
-        shopButton.draw(hide=True)
-        screen.fill("Blue")
-        shop_bg = pygame.image.load(f"{DIR}shop_back.png").convert()
-        screen.blit(shop_bg,(0,0))
-        # exitButton.draw()
-        # screen.fill("Black")
-        # drawShop()
-        if pencil.draw():
-            pass
-        # elif glasses.draw():
-        #     pass
-        # elif ai_hat.draw():
-        #     pass
-        # elif tests.draw():
-        #     pass
-        # elif exitButton.draw():
-        #     inShop = False 
-        if exitButton.draw():
-            inShop = False
-            resumeGame()
+        drawShop()
+      
 
     if mainMenu:
         drawMainMenu()
