@@ -158,7 +158,7 @@ def startGame():
     playingGame = True
     gameOver = False
     score = 0
-    money = 50
+    money = 0
     timesAllowanceApplied = 0
     blinkMultiplier = 1
     scoreMultiplier = 1
