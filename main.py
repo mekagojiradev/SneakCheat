@@ -101,6 +101,7 @@ shop_bg = pygame.image.load(f"{DIR}shop_back.png").convert()
 
 shop_bg = pygame.transform.scale(shop_bg,screen.get_size())
 
+# shop BUttons
 pencil = button.Button(screen, pencil_img, x=WIDTH//2-300,y=(2/3)*HEIGHT , scale=2, image_alt=pencil_img)  
 tests = button.Button(screen, tests_img, x=WIDTH//2-100,y=(2/3)*HEIGHT , scale=2, image_alt=tests_img)  
 glasses = button.Button(screen, glasses_img, x=WIDTH//2+100,y=(2/3)*HEIGHT , scale=2, image_alt=glasses_img)  
