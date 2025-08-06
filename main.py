@@ -207,7 +207,7 @@ def drawShop():
     global inShop
   
     shopButton.draw(hide=True)
-    screen.fill("White")
+    screen.fill((255,255,255))
     
     # exitButton.draw()
     # drawShop()
@@ -380,7 +380,12 @@ def drawClassroom():
     pygame.draw.rect(screen, (120, 90, 40), (door_x, door_y, door_width, door_height))
     pygame.draw.rect(screen, (60, 40, 20), (door_x + 10, door_y + 80, 20, 20))
     
-    # pygame.draw.rect(screen, (128,128,128), ())
+    # practice clicking square :)
+    
+    pygame.draw.rect(screen, (128, 128, 128), (885, 885, 150, 65))
+    text_surface = font.render("Practice:)", True, (255, 255, 255))
+    text_rect = text_surface.get_rect(center=(885 + 75, 885 + 32))  # center of the 150x65 box
+    screen.blit(text_surface, text_rect)
 
     light_color = (255, 255, 210)
     pygame.draw.rect(screen, light_color, (WIDTH // 4 - 80, 20, 160, 15))
