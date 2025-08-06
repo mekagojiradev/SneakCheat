@@ -318,6 +318,8 @@ def buyHat():
         teacherTimeMin = 1 * FPS
         teacherTimeMax = 7 * FPS
         hatBought = True
+        return True
+    return False
 
 def buyTest():
     global money, scoreMultiplier, testBought
@@ -325,6 +327,8 @@ def buyTest():
         money -= 13
         scoreMultiplier *= 2
         testBought = True
+        return True
+    return False
 
 def buyPencil():
     global money, testTimeForMoney, pencilBought
@@ -332,6 +336,8 @@ def buyPencil():
         money -= 16
         testTimeForMoney = 10 * FPS
         pencilBought = True
+        return True
+    return False
 
 def buyGlasses():
     global money, blinkMultiplier, glassesBought
@@ -339,6 +345,8 @@ def buyGlasses():
         money -=4
         blinkMultiplier = 2
         glassesBought = True
+        return True
+    return False
 
 def drawTeacher():
     teacher_x = WIDTH // 2 - 30
