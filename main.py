@@ -113,6 +113,7 @@ pencil_img_out = pygame.image.load(f'{DIR}pencil_out.png').convert_alpha()
 tests_img_out = pygame.image.load(f'{DIR}tests_out.png').convert_alpha() 
 glasses_img_out = pygame.image.load(f'{DIR}glasses_out.png').convert_alpha() 
 ai_img_out = pygame.image.load(f'{DIR}ai_out.png').convert_alpha() 
+
 pencil = button.Button(screen, pencil_img, x=WIDTH//3-150,y=(2/3)*HEIGHT , scale=1, image_alt=pencil_img)  
 tests = button.Button(screen, tests_img, x=WIDTH//2-450,y=(2/5)*HEIGHT , scale=1.3, image_alt=tests_img)  
 glasses = button.Button(screen, glasses_img, x=WIDTH//2,y=(2/5)*HEIGHT , scale=1.5, image_alt=glasses_img)  
@@ -169,8 +170,8 @@ def startGame():
     isTeacherLooking = False
     pencil = button.Button(screen, pencil_img, x=WIDTH//3-150,y=(2/3)*HEIGHT , scale=1, image_alt=pencil_img)  
     tests = button.Button(screen, tests_img, x=WIDTH//2-450,y=(2/5)*HEIGHT , scale=1.3, image_alt=tests_img)  
-    glasses = button.Button(screen, glasses_img, x=WIDTH//2+100,y=(2/5)*HEIGHT , scale=1.5, image_alt=glasses_img)  
-    ai_hat = button.Button(screen, ai_img, x=WIDTH//2+100,y=(2/3)*HEIGHT , scale=1.5, image_alt=ai_img)  
+    glasses = button.Button(screen, glasses_img, x=WIDTH//2,y=(2/5)*HEIGHT , scale=1.5, image_alt=glasses_img)  
+    ai_hat = button.Button(screen, ai_img, x=WIDTH//2,y=(2/3)*HEIGHT , scale=1.5, image_alt=ai_img)  
     
     setSafeTime()
     mixer.ring_bell(volume=.1)
@@ -258,11 +259,11 @@ def drawShop():
         
         if buyGlasses():
             screen.blit(nice, nice_rect) 
-            glasses = button.Button(screen, glasses_img_out, x=WIDTH//2+100,y=(2/5)*HEIGHT , scale=1.5, image_alt=glasses_img_out)
+            glasses = button.Button(screen, glasses_img_out, x=WIDTH//2,y=(2/5)*HEIGHT , scale=1.5, image_alt=glasses_img_out)
             mixer.cha_ching(volume=.5)
         else:
             # cant afford
-            glasses = button.Button(screen, glasses_img_out, x=WIDTH//2+100,y=(1/4)*HEIGHT , scale=1.5, image_alt=glasses_img_out)
+            glasses = button.Button(screen, glasses_img_out, x=WIDTH//2,y=(2/5)*HEIGHT , scale=1.5, image_alt=glasses_img_out)
             screen.blit(not_afford, not_afford_rect) if not glassesBought else None
             
             
@@ -270,11 +271,11 @@ def drawShop():
         
         if buyHat():
             screen.blit(nice, nice_rect) 
-            ai_hat = button.Button(screen, ai_img_out, x=WIDTH//2+100,y=(2/3)*HEIGHT , scale=1.5, image_alt=ai_img_out)
+            ai_hat = button.Button(screen, ai_img_out, x=WIDTH//2,y=(2/3)*HEIGHT , scale=1.5, image_alt=ai_img_out)
             mixer.cha_ching(volume=.5)
         else:
             # can't afford
-            ai_hat = button.Button(screen, ai_img_out, x=WIDTH//2+100,y=(2/3)*HEIGHT , scale=1.5, image_alt=ai_img_out)
+            ai_hat = button.Button(screen, ai_img_out, x=WIDTH//2,y=(2/3)*HEIGHT , scale=1.5, image_alt=ai_img_out)
             screen.blit(not_afford, not_afford_rect) if not hatBought else None
             
             
