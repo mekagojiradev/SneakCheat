@@ -123,7 +123,7 @@ quitButton = button.Button(screen, quit_img_blk, x=WIDTH//2,y=(2/3)*HEIGHT + 100
 menuButton = button.Button(screen, menu_btn_img_blk, x=WIDTH//2 - 200,y=(2/3)*HEIGHT, scale=0.3, image_alt=menu_btn_img_alt) 
 tryAgainButton = button.Button(screen, try_again_img_blk, x=WIDTH//2 + 200,y=(2/3)*HEIGHT, scale=0.3, image_alt=try_again_img_alt) 
 
-
+ 
 
 # Clock for controlling frame rate
 clock = pygame.time.Clock()
@@ -239,7 +239,7 @@ def drawShop():
     if pencil.draw():
     
         if buyPencil():    
-            pencil = button.Button(screen, pencil_img_out, x=WIDTH//3-300,y=(2/3)*HEIGHT , scale=2, image_alt=pencil_img_out) 
+            pencil = button.Button(screen, pencil_img_out, x=WIDTH//3-150,y=(2/3)*HEIGHT , scale=1, image_alt=pencil_img_out) 
             screen.blit(nice, nice_rect) 
             mixer.cha_ching(volume=.5)
         else:
@@ -251,7 +251,7 @@ def drawShop():
         
         if buyGlasses():
             screen.blit(nice, nice_rect) 
-            glasses = button.Button(screen, glasses_img_out, x=WIDTH//2+300,y=(1/4)*HEIGHT , scale=2, image_alt=glasses_img_out)
+            glasses = button.Button(screen, glasses_img_out, x=WIDTH//2+100,y=(2/5)*HEIGHT , scale=1.5, image_alt=glasses_img_out)
             mixer.cha_ching(volume=.5)
         else:
             # cant afford
@@ -263,7 +263,7 @@ def drawShop():
         
         if buyHat():
             screen.blit(nice, nice_rect) 
-            ai_hat = button.Button(screen, ai_img_out, x=WIDTH//2+300,y=(2/3)*HEIGHT , scale=2, image_alt=ai_img_out)
+            ai_hat = button.Button(screen, ai_img_out, x=WIDTH//2+100,y=(2/3)*HEIGHT , scale=1.5, image_alt=ai_img_out)
             mixer.cha_ching(volume=.5)
         else:
             # can't afford
@@ -275,7 +275,7 @@ def drawShop():
        
         if buyTest():
             screen.blit(nice, nice_rect) 
-            tests = button.Button(screen, tests_img_out, x=WIDTH//2-480,y=(1/4)*HEIGHT , scale=2, image_alt=tests_img_out)  
+            tests = button.Button(screen, tests_img_out, x=WIDTH//2-480,y=(2/5)*HEIGHT - 15 , scale=1.3, image_alt=tests_img_out)  
             mixer.cha_ching(volume=.5)
             
         else:
