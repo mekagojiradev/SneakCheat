@@ -485,7 +485,7 @@ while running:
        
         
    
-    if not shopButton.draw(isShop=True, hide = inShop) and playingGame and pygame.mouse.get_pressed()[0]:
+    if not shopButton.draw(hide = inShop) and playingGame and pygame.mouse.get_pressed()[0]:
         isCheating = True
 
         score += 1 * scoreMultiplier
@@ -502,7 +502,7 @@ while running:
             
         isCheating = False    
 
-    if isCheating and isTeacherLooking and not shopButton.draw(isShop=True, hide=inShop):
+    if isCheating and isTeacherLooking and not shopButton.draw( hide=inShop):
         mixer.writing(stop=True)
         mixer.yell(volume=YELL_VOLUME)
         mixer.set_music(gameOver=True)
@@ -548,7 +548,7 @@ while running:
         drawLeaderboard(score)
         drawScore()
         drawMoney()
-        shopButton.draw(isShop=True) # Change this to display shop button at diff time
+        shopButton.draw() # Change this to display shop button at diff time
     elif gameOver:
         updateLeaderboard(score)
         drawGameOver()
