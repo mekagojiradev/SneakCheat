@@ -57,7 +57,7 @@ glassesBought = False
 mixer = sound.Mixer()
 YELL_VOLUME = 0.3
 DIR = 'assets/buttons/'
-leaderBoard = [Player('Satan', 9999), 
+leaderBoard = [Player('Robert Smith', 9999), 
                     Player('Rihanna',4880), 
                     Player('Dunkey', 3500),
                     Player('Carrot Top', 1450),
@@ -532,7 +532,7 @@ def drawLeaderboard(score: int, board: list = leaderBoard, x: int =(WIDTH / 2)  
     text_surface = small_font.render(f'{"Top Students":<15}{"Scores":<10}', True, (255, 255, 255))
     screen.blit(text_surface, (x,y))
     y+=5
-    
+    print(board)
     for i in range(length):
         y += 20
         text_surface = small_font.render(f'{board[i]}', True, (255, 255, 255))
@@ -541,8 +541,10 @@ def drawLeaderboard(score: int, board: list = leaderBoard, x: int =(WIDTH / 2)  
 def updateLeaderboard(score: int, board: list = leaderBoard):
     
     if score > min(board):
-        board.append(Player("CHEATER", score))
+        if Player('CHEATER', score) not in board:
+                board.append(Player("CHEATER", score))
     board.sort(reverse=True) 
+    print(board)
     pass  
    
     
