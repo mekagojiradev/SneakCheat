@@ -12,6 +12,9 @@ pygame.init()
 WIDTH, HEIGHT = 1920, 1000
 FPS = 60
 BG_COLOR = (30, 30, 30)
+SHOP_MARGIN_RIGHT = 340
+SHOP_X = 260
+SHOP_WIDTH = WIDTH - SHOP_X - SHOP_MARGIN_RIGHT
 
 # Variables
 safeTime = 0
@@ -21,6 +24,7 @@ safeTimeMax = 8 * FPS
 teacherTimeMin = 2 * FPS
 teacherTimeMax = 10 * FPS
 score = 0
+scoreMultiplier = 1
 money = 0
 testTimeForMoney = 15 * FPS
 timesAllowanceApplied = 0
@@ -30,6 +34,9 @@ isCheating = False
 mainMenu = True
 playingGame = False
 gameOver = False
+inShop = False
+justEnteredShop = False
+
 
 # Fonts
 font = pygame.font.SysFont("Courier New", 25)
@@ -41,16 +48,24 @@ background_colors = []
 warningTime = 0
 showWarning = False
 teacherBlinking = False
+blinkMultiplier = 1
 blinkCounter = 0
+hatBought = False
+pencilBought = False
+testBought = False
+glassesBought = False
 mixer = sound.Mixer()
 YELL_VOLUME = 0.3
 DIR = 'assets/buttons/'
-leaderBoard = [Player('Satan', 9999), 
+leaderBoard = [Player('Robert Smith', 9999), 
                     Player('Rihanna',4880), 
                     Player('Dunkey', 3500),
                     Player('Carrot Top', 1450),
                     Player('Shania Twain', 500)]
-
+shopPrices = [('Last Years Tests', '$13'),
+              ('Faster Writing Pencil', '$16'),
+              ('Academic Integrity Hat', '$7'),
+              ('Shady Glasses', '$4')]
 
 wasClicking = False
 musicNotStarted = True
@@ -81,8 +96,31 @@ try_again_img_alt = pygame.image.load(f'{DIR}try_again_w.jpeg').convert_alpha()
 quit_img_blk = pygame.image.load(f'{DIR}quit_b.jpeg').convert_alpha()
 quit_img_alt = pygame.image.load(f'{DIR}quit_w.jpeg').convert_alpha()
 
+#Shop
 shop_img_w = pygame.image.load(f'{DIR}shop_w.jpeg').convert_alpha() 
 shop_img_r = pygame.image.load(f'{DIR}shop_r.jpeg').convert_alpha() 
+exit_img_w = pygame.image.load(f'{DIR}exit_w.jpeg').convert_alpha() 
+exit_img_r = pygame.image.load(f'{DIR}exit_r.jpeg').convert_alpha() 
+pencil_img = pygame.image.load(f'{DIR}pencil.png').convert_alpha() 
+tests_img = pygame.image.load(f'{DIR}tests.png').convert_alpha() 
+glasses_img = pygame.image.load(f'{DIR}glasses.png').convert_alpha() 
+ai_img = pygame.image.load(f'{DIR}ai.png').convert_alpha() 
+shop_bg = pygame.image.load(f"{DIR}shop_back.png").convert()
+
+shop_bg = pygame.transform.scale(shop_bg,screen.get_size())
+# ALTS
+pencil_img_out = pygame.image.load(f'{DIR}pencil_out.png').convert_alpha() 
+tests_img_out = pygame.image.load(f'{DIR}tests_out.png').convert_alpha() 
+glasses_img_out = pygame.image.load(f'{DIR}glasses_out.png').convert_alpha() 
+ai_img_out = pygame.image.load(f'{DIR}ai_out.png').convert_alpha() 
+
+pencil = button.Button(screen, pencil_img, x=WIDTH//3-150,y=(2/3)*HEIGHT , scale=1, image_alt=pencil_img)  
+tests = button.Button(screen, tests_img, x=WIDTH//2-450,y=(2/5)*HEIGHT , scale=1.3, image_alt=tests_img)  
+glasses = button.Button(screen, glasses_img, x=WIDTH//2,y=(2/5)*HEIGHT , scale=1.5, image_alt=glasses_img)  
+ai_hat = button.Button(screen, ai_img, x=WIDTH//2,y=(2/3)*HEIGHT , scale=1.5, image_alt=ai_img)  
+
+shopButton = button.Button(screen, shop_img_w, x=WIDTH//4,y=(2/3)*HEIGHT + 250, scale=0.3, image_alt=shop_img_r)  
+exitButton = button.Button(screen, exit_img_w, x=WIDTH//2,y=(2/3)*HEIGHT + 250, scale=0.3, image_alt=exit_img_r)  
 
 startButton = button.Button(screen, start_img, x=WIDTH//2,y=(2/3)*HEIGHT, scale=0.3, image_alt=start_img_alt)
 quitButton = button.Button(screen, quit_img_blk, x=WIDTH//2,y=(2/3)*HEIGHT + 100, scale=0.4, image_alt=quit_img_alt) 
@@ -90,7 +128,6 @@ quitButton = button.Button(screen, quit_img_blk, x=WIDTH//2,y=(2/3)*HEIGHT + 100
 menuButton = button.Button(screen, menu_btn_img_blk, x=WIDTH//2 - 200,y=(2/3)*HEIGHT, scale=0.3, image_alt=menu_btn_img_alt) 
 tryAgainButton = button.Button(screen, try_again_img_blk, x=WIDTH//2 + 200,y=(2/3)*HEIGHT, scale=0.3, image_alt=try_again_img_alt) 
 
-shopButton = button.Button(screen, shop_img_w, x=WIDTH//2,y=(2/3)*HEIGHT + 250, scale=0.3, image_alt=shop_img_r)  
 
 
 # Clock for controlling frame rate
@@ -113,8 +150,9 @@ def setTeacherTime():
 
 def startGame():
 
-    global mainMenu, playingGame, score, money, timesAllowanceApplied, gameOver, isTeacherLooking
-
+    global mainMenu, playingGame, score, money, timesAllowanceApplied, gameOver, isTeacherLooking, pencil, tests, glasses, ai_hat
+    #Also restetting item stuff
+    global blinkMultiplier, scoreMultiplier, teacherTimeMin, teacherTimeMax, testTimeForMoney, hatBought, testBought, pencilBought, glassesBought
 
     mainMenu = False
     playingGame = True
@@ -122,14 +160,35 @@ def startGame():
     score = 0
     money = 0
     timesAllowanceApplied = 0
+    blinkMultiplier = 1
+    scoreMultiplier = 1
+    teacherTimeMin = 2 * FPS
+    teacherTimeMax = 10 * FPS
+    testTimeForMoney = 15 * FPS
+    hatBought, testBought, pencilBought, glassesBought = False, False, False, False
 
     isTeacherLooking = False
+    pencil = button.Button(screen, pencil_img, x=WIDTH//3-150,y=(2/3)*HEIGHT , scale=1, image_alt=pencil_img)  
+    tests = button.Button(screen, tests_img, x=WIDTH//2-450,y=(2/5)*HEIGHT , scale=1.3, image_alt=tests_img)  
+    glasses = button.Button(screen, glasses_img, x=WIDTH//2,y=(2/5)*HEIGHT , scale=1.5, image_alt=glasses_img)  
+    ai_hat = button.Button(screen, ai_img, x=WIDTH//2,y=(2/3)*HEIGHT , scale=1.5, image_alt=ai_img)  
     
     setSafeTime()
     mixer.ring_bell(volume=.1)
     mixer.set_music(isPlaying=True)
 
+def resumeGame():
+    global mainMenu, playingGame, score, money, timesAllowanceApplied, gameOver, isTeacherLooking
+
+
+    mainMenu = False
+    playingGame = True
+    gameOver = False
+    # isTeacherLooking = False
     
+    setSafeTime()
+    mixer.set_music(isPlaying=True)
+       
 def startMenu():
     global mainMenu, playingGame, score, gameOver, isTeacherLooking
     mainMenu = True
@@ -139,17 +198,156 @@ def startMenu():
     score = 0
     setSafeTime()
     mixer.set_music(start=True)
+    
 
+    
+def setShop() -> None:
+    global playingGame, inShop, justEnteredShop
+    inShop = True
+    playingGame = False
+    mixer.set_music(isShop=True)
+    # setSafeTime()
+    
+    
    
 # Will Use Pygbag to check cache for previous data   
 def setLeaderBoard():
     global leaderBoard 
-    leaderBoard = [Player('Satan', 9999), 
+    leaderBoard = [Player('Robert Smith', 9999), 
                     Player('Rihanna',4880), 
                     Player('Dunkey', 3500),
                     Player('Carrot Top', 1450),
                     Player('Shania Twain', 500)]
+
+def drawShop():
+    global inShop, pencil, glasses, ai_hat, tests, exitButton
+  
+    shopButton.draw(hide=True)
+    shop_overlay = pygame.Surface((SHOP_WIDTH, HEIGHT - 400))
+    shop_overlay.fill((90, 60, 20))
+    screen.blit(shop_overlay, (SHOP_X, 200))
+    # Foreground layer
+    shop_overlay = pygame.Surface((SHOP_WIDTH, HEIGHT - 420))
+    shop_overlay.fill((15, 80, 25))
+
     
+   
+   
+    # afford messafe
+    not_afford = font.render("Can't Afford!", True, (255, 255, 255))
+    not_afford_rect = not_afford.get_rect(center=(885 + 75, 500))  # center of the 150x65 box
+    nice = font.render("       Nice!        ", True, (255, 255, 255))
+    nice_rect = nice.get_rect(center=(885 + 75, 500))
+    
+  
+    
+    screen.blit(shop_overlay, (SHOP_X, 210))
+
+
+    if pencil.draw():
+    
+        if buyPencil():    
+            pencil = button.Button(screen, pencil_img_out, x=WIDTH//3-150,y=(2/3)*HEIGHT , scale=1, image_alt=pencil_img_out) 
+            screen.blit(nice, nice_rect) 
+            mixer.cha_ching(volume=.5)
+        else:
+            # print cant afford
+           
+            screen.blit(not_afford, not_afford_rect) if not pencilBought else None
+
+    if glasses.draw():
+        
+        if buyGlasses():
+            screen.blit(nice, nice_rect) 
+            glasses = button.Button(screen, glasses_img_out, x=WIDTH//2,y=(2/5)*HEIGHT , scale=1.5, image_alt=glasses_img_out)
+            mixer.cha_ching(volume=.5)
+        else:
+            # cant afford
+            
+            screen.blit(not_afford, not_afford_rect) if not glassesBought else None
+            
+            
+    if ai_hat.draw():
+        
+        if buyHat():
+            screen.blit(nice, nice_rect) 
+            ai_hat = button.Button(screen, ai_img_out, x=WIDTH//2,y=(2/3)*HEIGHT , scale=1.5, image_alt=ai_img_out)
+            mixer.cha_ching(volume=.5)
+        else:
+            # can't afford
+      
+            screen.blit(not_afford, not_afford_rect) if not hatBought else None
+            
+            
+    if tests.draw():
+       
+        if buyTest():
+            screen.blit(nice, nice_rect) 
+            tests = button.Button(screen, tests_img_out, x=WIDTH//2-480,y=(2/5)*HEIGHT - 15 , scale=1.3, image_alt=tests_img_out)  
+            mixer.cha_ching(volume=.5)
+            
+        else:
+            # can't afford
+           
+            screen.blit(not_afford, not_afford_rect) if not testBought else None
+            
+      
+    price_font = pygame.font.SysFont("Courier New", 26)
+    price_color = (255, 255, 255)  # Yellowish for visibility
+
+    price_start_x = SHOP_X + SHOP_WIDTH - 250  # Push prices toward right side
+    price_start_y = 240  # Start near top of chalkboard
+    line_spacing = 60  # Space between each line
+
+    for i, (item, price) in enumerate(shopPrices):
+        item_surface = price_font.render(f"{item}", True, (255, 255, 255))
+        price_surface = price_font.render(f"{price}", True, price_color)
+
+        screen.blit(item_surface, (price_start_x - 170, price_start_y + i * line_spacing))
+        screen.blit(price_surface, (price_start_x + 200, price_start_y + i * line_spacing))  # push $ amount further right
+
+    if exitButton.draw():
+        inShop = False
+        resumeGame()
+    
+
+def buyHat():
+    global money, teacherTimeMin, teacherTimeMax, hatBought
+    if money >= 7 and not hatBought:
+        money -= 7
+        teacherTimeMin = 1 * FPS
+        teacherTimeMax = 7 * FPS
+        hatBought = True
+        return True
+    return False
+
+def buyTest():
+    global money, scoreMultiplier, testBought
+    if money >= 13 and not testBought:
+        money -= 13
+        scoreMultiplier *= 2
+        testBought = True
+        return True
+    return False
+
+def buyPencil():
+    global money, testTimeForMoney, pencilBought
+    if money >= 16 and not pencilBought:
+        money -= 16
+        testTimeForMoney = 10 * FPS
+        pencilBought = True
+        return True
+    return False
+
+def buyGlasses():
+    global money, blinkMultiplier, glassesBought
+    if money >= 4 and not glassesBought:
+        money -=4
+        blinkMultiplier = 2
+        glassesBought = True
+        return True
+    return False
+
 def drawTeacher():
     teacher_x = WIDTH // 2 - 30
     floor_y = int(HEIGHT * 0.65)
@@ -267,6 +465,13 @@ def drawClassroom():
     door_y = floor_y - door_height
     pygame.draw.rect(screen, (120, 90, 40), (door_x, door_y, door_width, door_height))
     pygame.draw.rect(screen, (60, 40, 20), (door_x + 10, door_y + 80, 20, 20))
+    
+    # practice clicking square :)
+    
+    pygame.draw.rect(screen, (128, 128, 128), (885, 885, 150, 65))
+    text_surface = font.render("Practice:)", True, (255, 255, 255))
+    text_rect = text_surface.get_rect(center=(885 + 75, 885 + 32))  # center of the 150x65 box
+    screen.blit(text_surface, text_rect)
 
     light_color = (255, 255, 210)
     pygame.draw.rect(screen, light_color, (WIDTH // 4 - 80, 20, 160, 15))
@@ -305,7 +510,7 @@ def drawMoney():
         money += 5
         mixer.cha_ching(volume=.5)
         # play sound
-    text_surface = font.render('Money: $' + str(money), True, (255, 255, 255))
+    text_surface = font.render('Allowance: $' + str(money), True, (255, 255, 255))
     screen.blit(text_surface, ((WIDTH / 2) - 220, (HEIGHT /2) - 80 ))
 
 
@@ -316,6 +521,9 @@ def drawMainMenu():
     
     startButton.draw()
     quitButton.draw()
+   
+    
+    
     
 
 def drawLeaderboard(score: int, board: list = leaderBoard, x: int =(WIDTH / 2)   , y: int = (HEIGHT /2) - 130 , length: int=5) -> None:
@@ -324,7 +532,7 @@ def drawLeaderboard(score: int, board: list = leaderBoard, x: int =(WIDTH / 2)  
     text_surface = small_font.render(f'{"Top Students":<15}{"Scores":<10}', True, (255, 255, 255))
     screen.blit(text_surface, (x,y))
     y+=5
-    
+   
     for i in range(length):
         y += 20
         text_surface = small_font.render(f'{board[i]}', True, (255, 255, 255))
@@ -333,8 +541,10 @@ def drawLeaderboard(score: int, board: list = leaderBoard, x: int =(WIDTH / 2)  
 def updateLeaderboard(score: int, board: list = leaderBoard):
     
     if score > min(board):
-        board[board.index(min(board))] = Player("CHEATER", score)
+        if Player('CHEATER', score) not in board:
+                board.append(Player("CHEATER", score))
     board.sort(reverse=True) 
+   
     pass  
    
     
@@ -347,6 +557,8 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (mainMenu and quitButton.draw()):  # Get rid of this conditional and add logic to check if in window
             running = False
+            
+      
         if musicNotStarted:
             setLeaderBoard()
             mixer.set_music(start=True)
@@ -364,17 +576,19 @@ while running:
                     drawMainMenu()
                     mixer.yell(stop=True)
                     startMenu()
-    
-    # starts shop music and open shop menu                
-    # if playingGame and shopButton.draw(isShop=True):
+
+
         
-    #     # mixer.set_music(isShop=True)
-    #     pass
-   
-    if playingGame and pygame.mouse.get_pressed()[0]:
+    shopButtonPressed = shopButton.draw(hide=inShop)
+    # starts shop music and open shop menu                
+    if playingGame and shopButtonPressed:
+        setShop()
+
+    if not shopButtonPressed and playingGame and pygame.mouse.get_pressed()[0] and not(pygame.mouse.get_pos()[0] >= 885 and pygame.mouse.get_pos()[0] <= 1035 and pygame.mouse.get_pos()[1] >= 885 and pygame.mouse.get_pos()[1] <= 950):
+
         isCheating = True
 
-        score += 1
+        score += 1 * scoreMultiplier
        
         if not wasClicking:
             mixer.writing(volume=1.0)
@@ -388,7 +602,9 @@ while running:
             
         isCheating = False    
 
-    if isCheating and isTeacherLooking:
+
+    if isCheating and isTeacherLooking and not shopButtonPressed:
+
         mixer.writing(stop=True)
         mixer.yell(volume=YELL_VOLUME)
         mixer.set_music(gameOver=True)
@@ -405,7 +621,7 @@ while running:
             if safeTime <= warningTime:
                 showWarning = True
                 teacherBlinking = True
-                blinkCounter += 1
+                blinkCounter += 1 * blinkMultiplier
 
     elif playingGame and isTeacherLooking:
         if teacherTime <= 0:
@@ -414,15 +630,19 @@ while running:
             setSafeTime()
         else:
             teacherTime -= 1
-
-    screen.fill(BG_COLOR)
-
-    drawClassroom()
-    drawEmptyDesks()
-    drawTeacher()
-    drawStudent()
     
+     # Logic for shop methods and conditionals    
+    if inShop:
+        drawShop()
 
+    else:
+        screen.fill(BG_COLOR)
+
+        drawClassroom()
+        drawEmptyDesks()
+        drawTeacher()
+        drawStudent()
+        
     if mainMenu:
         drawMainMenu()
         # shopButton.draw() # Change this to display shop button at diff time
@@ -430,7 +650,9 @@ while running:
         drawLeaderboard(score)
         drawScore()
         drawMoney()
-        # shopButton.draw(isShop=True) # Change this to display shop button at diff time
+        if not inShop:
+            shopButton.draw() # Change this to display shop button at diff time
+
     elif gameOver:
         updateLeaderboard(score)
         drawGameOver()

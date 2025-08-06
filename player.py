@@ -13,7 +13,7 @@ class Player:
     
     def __eq__(self,other) -> bool:
         if isinstance(other, Player):
-            return self.score == other.score
+            return self.score == other.score and self.name == other.name
         if isinstance(other, int):
             return self.score == other
         return False

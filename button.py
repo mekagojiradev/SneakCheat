@@ -16,7 +16,7 @@ class Button():
         self.rect.center = (x,y)
         self.clicked = False
        
-    def draw(self, hide: bool=False, isShop: bool = False) -> bool:
+    def draw(self, hide: bool=False) -> bool:
         if hide:
             return False
         
@@ -26,7 +26,7 @@ class Button():
             if self.image_alt:
                 self.screen.blit(self.image_alt, (self.rect.x, self.rect.y)) 
             if pygame.mouse.get_pressed()[0] and not self.clicked:
-                self.clicked = True if not isShop else False
+                self.clicked = True 
                 return True    
                 
         if not pygame.mouse.get_pressed()[0]:
