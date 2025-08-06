@@ -32,6 +32,7 @@ mainMenu = True
 playingGame = False
 gameOver = False
 inShop = False
+justEnteredShop = False
 
 # Fonts
 font = pygame.font.SysFont("Courier New", 25)
@@ -88,7 +89,7 @@ try_again_img_alt = pygame.image.load(f'{DIR}try_again_w.jpeg').convert_alpha()
 quit_img_blk = pygame.image.load(f'{DIR}quit_b.jpeg').convert_alpha()
 quit_img_alt = pygame.image.load(f'{DIR}quit_w.jpeg').convert_alpha()
 
-#Shop assets
+#Shop
 shop_img_w = pygame.image.load(f'{DIR}shop_w.jpeg').convert_alpha() 
 shop_img_r = pygame.image.load(f'{DIR}shop_r.jpeg').convert_alpha() 
 exit_img_w = pygame.image.load(f'{DIR}exit_w.jpeg').convert_alpha() 
@@ -101,13 +102,12 @@ shop_bg = pygame.image.load(f"{DIR}shop_back.png").convert()
 
 shop_bg = pygame.transform.scale(shop_bg,screen.get_size())
 
-# shop BUttons (actual objects)
-pencil = button.Button(screen, pencil_img, x=WIDTH//2-300,y=(2/3)*HEIGHT , scale=2, image_alt=pencil_img)  
+pencil = button.Button(screen, pencil_img, x=WIDTH//1.5-300,y=(2/3)*HEIGHT , scale=2, image_alt=pencil_img)  
 tests = button.Button(screen, tests_img, x=WIDTH//2-100,y=(2/3)*HEIGHT , scale=2, image_alt=tests_img)  
 glasses = button.Button(screen, glasses_img, x=WIDTH//2+100,y=(2/3)*HEIGHT , scale=2, image_alt=glasses_img)  
-ai_hat = button.Button(screen, ai_img, x=WIDTH//2+300,y=(2/3)*HEIGHT , scale=2, image_alt=ai_img)  
+ai_hat = button.Button(screen, ai_img, x=WIDTH//1.5+300,y=(2/3)*HEIGHT , scale=2, image_alt=ai_img)  
 
-shopButton = button.Button(screen, shop_img_w, x=WIDTH//2,y=(2/3)*HEIGHT + 250, scale=0.3, image_alt=shop_img_r)  
+shopButton = button.Button(screen, shop_img_w, x=WIDTH//4,y=(2/3)*HEIGHT + 250, scale=0.3, image_alt=shop_img_r)  
 exitButton = button.Button(screen, exit_img_w, x=WIDTH//2,y=(2/3)*HEIGHT + 250, scale=0.3, image_alt=exit_img_r)  
 
 startButton = button.Button(screen, start_img, x=WIDTH//2,y=(2/3)*HEIGHT, scale=0.3, image_alt=start_img_alt)
@@ -168,7 +168,7 @@ def resumeGame():
     mainMenu = False
     playingGame = True
     gameOver = False
-    #isTeacherLooking = False
+    # isTeacherLooking = False
     
     setSafeTime()
     mixer.set_music(isPlaying=True)
@@ -183,8 +183,10 @@ def startMenu():
     setSafeTime()
     mixer.set_music(start=True)
     
+
+    
 def setShop() -> None:
-    global playingGame, inShop
+    global playingGame, inShop, justEnteredShop
     inShop = True
     playingGame = False
     mixer.set_music(isShop=True)
@@ -211,47 +213,50 @@ def drawShop():
     # drawShop()
     if pencil.draw():
         buyPencil()
+        # inShop = False
+        # resumeGame()
     if glasses.draw():
         buyGlasses()
+        # inShop = False
+        # resumeGame()
     if ai_hat.draw():
         buyHat()
+        # inShop = False
+        # resumeGame()
     if tests.draw():
         buyTest()
-    
+        # inShop = False
+        # resumeGame()
+
     if exitButton.draw():
         inShop = False
         resumeGame()
     
-    
 
 def buyHat():
-    global money, teacherTimeMin, teacherTimeMax, hatBought
-    if money >= 7 and not hatBought:
+    global money, teacherTimeMin, teacherTimeMax
+    if money >= 7:
         money -= 7
         teacherTimeMin = 1 * FPS
         teacherTimeMax = 7 * FPS
-        hatBought = True
 
 def buyTest():
-    global money, scoreMultiplier, testBought
-    if money >= 13 and not testBought:
+    global money, scoreMultiplier
+    if money >= 13:
         money -= 13
         scoreMultiplier *= 2
-        testBought = True
 
 def buyPencil():
-    global money, testTimeForMoney, pencilBought
-    if money >= 16 and not pencilBought:
+    global money, testTimeForMoney
+    if money >= 16:
         money -= 16
         testTimeForMoney = 10 * FPS
-        pencilBought = True
 
 def buyGlasses():
-    global money, blinkMultiplier, glassesBought
-    if money >= 4 and not glassesBought:
+    global money, blinkMultiplier
+    if money >= 4:
         money -=4
         blinkMultiplier = 2
-        glassesBought = True
 
 def drawTeacher():
     teacher_x = WIDTH // 2 - 30
@@ -408,7 +413,7 @@ def drawMoney():
         money += 5
         mixer.cha_ching(volume=.5)
         # play sound
-    text_surface = font.render('Money: $' + str(money), True, (255, 255, 255))
+    text_surface = font.render('Allowance: $' + str(money), True, (255, 255, 255))
     screen.blit(text_surface, ((WIDTH / 2) - 220, (HEIGHT /2) - 80 ))
 
 
@@ -450,7 +455,6 @@ def updateLeaderboard(score: int, board: list = leaderBoard):
 while running:
     clock.tick(FPS)
 
-    print(pygame.mouse.get_pos())
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (mainMenu and quitButton.draw()):  # Get rid of this conditional and add logic to check if in window
             running = False
@@ -473,15 +477,15 @@ while running:
                     drawMainMenu()
                     mixer.yell(stop=True)
                     startMenu()
-    
+
+        
+    shopButtonPressed = shopButton.draw(hide=inShop)
     # starts shop music and open shop menu                
-    if playingGame and shopButton.draw(hide=inShop):
+    if playingGame and shopButtonPressed:
         setShop()
-        
-       
-        
+
    
-    if playingGame and pygame.mouse.get_pressed()[0] and not(pygame.mouse.get_pos()[0] > 880 and pygame.mouse.get_pos()[0] < 1040 and pygame.mouse.get_pos()[1] < 950 and pygame.mouse.get_pos()[1] > 885):
+    if not shopButtonPressed and playingGame and pygame.mouse.get_pressed()[0]:
         isCheating = True
 
         score += 1 * scoreMultiplier
@@ -498,7 +502,7 @@ while running:
             
         isCheating = False    
 
-    if isCheating and isTeacherLooking:
+    if isCheating and isTeacherLooking and not shopButtonPressed:
         mixer.writing(stop=True)
         mixer.yell(volume=YELL_VOLUME)
         mixer.set_music(gameOver=True)
@@ -524,19 +528,19 @@ while running:
             setSafeTime()
         else:
             teacherTime -= 1
-    if not inShop:
+    
+     # Logic for shop methods and conditionals    
+    if inShop:
+        drawShop()
+
+    else:
         screen.fill(BG_COLOR)
 
         drawClassroom()
         drawEmptyDesks()
         drawTeacher()
         drawStudent()
-    
-     # Logic for shop methods and conditionals    
-    if inShop:
-        drawShop()
-      
-
+        
     if mainMenu:
         drawMainMenu()
         # shopButton.draw() # Change this to display shop button at diff time
@@ -544,7 +548,8 @@ while running:
         drawLeaderboard(score)
         drawScore()
         drawMoney()
-        shopButton.draw() # Change this to display shop button at diff time
+        if not inShop:
+            shopButton.draw() # Change this to display shop button at diff time
     elif gameOver:
         updateLeaderboard(score)
         drawGameOver()
