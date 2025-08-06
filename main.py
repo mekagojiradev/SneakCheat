@@ -30,6 +30,7 @@ isCheating = False
 mainMenu = True
 playingGame = False
 gameOver = False
+inShop = False
 
 # Fonts
 font = pygame.font.SysFont("Courier New", 25)
@@ -81,11 +82,23 @@ try_again_img_alt = pygame.image.load(f'{DIR}try_again_w.jpeg').convert_alpha()
 quit_img_blk = pygame.image.load(f'{DIR}quit_b.jpeg').convert_alpha()
 quit_img_alt = pygame.image.load(f'{DIR}quit_w.jpeg').convert_alpha()
 
+#Shop
 shop_img_w = pygame.image.load(f'{DIR}shop_w.jpeg').convert_alpha() 
 shop_img_r = pygame.image.load(f'{DIR}shop_r.jpeg').convert_alpha() 
+exit_img_w = pygame.image.load(f'{DIR}exit_w.jpeg').convert_alpha() 
+exit_img_r = pygame.image.load(f'{DIR}exit_r.jpeg').convert_alpha() 
+pencil_img = pygame.image.load(f'{DIR}pencil.png').convert_alpha() 
+tests_img = pygame.image.load(f'{DIR}tests.png').convert_alpha() 
+glasses_img = pygame.image.load(f'{DIR}glasses.png').convert_alpha() 
+ai_img = pygame.image.load(f'{DIR}ai.png').convert_alpha() 
 
-#SHop
+pencil = button.Button(screen, pencil_img, x=WIDTH//2,y=(2/3)*HEIGHT , scale=10)  
+tests = button.Button(screen, tests_img, x=WIDTH//2,y=(2/3)*HEIGHT + 100, scale=0.03)  
+glasses = button.Button(screen, glasses_img, x=WIDTH//2,y=(2/3)*HEIGHT + 150, scale=0.03)  
+ai_hat = button.Button(screen, ai_img, x=WIDTH//2,y=(2/3)*HEIGHT + 200, scale=0.3)  
 
+shopButton = button.Button(screen, shop_img_w, x=WIDTH//2,y=(2/3)*HEIGHT + 250, scale=0.3, image_alt=shop_img_r)  
+exitButton = button.Button(screen, exit_img_w, x=WIDTH//2,y=(2/3)*HEIGHT + 250, scale=0.3, image_alt=exit_img_r)  
 
 startButton = button.Button(screen, start_img, x=WIDTH//2,y=(2/3)*HEIGHT, scale=0.3, image_alt=start_img_alt)
 quitButton = button.Button(screen, quit_img_blk, x=WIDTH//2,y=(2/3)*HEIGHT + 100, scale=0.4, image_alt=quit_img_alt) 
@@ -93,7 +106,6 @@ quitButton = button.Button(screen, quit_img_blk, x=WIDTH//2,y=(2/3)*HEIGHT + 100
 menuButton = button.Button(screen, menu_btn_img_blk, x=WIDTH//2 - 200,y=(2/3)*HEIGHT, scale=0.3, image_alt=menu_btn_img_alt) 
 tryAgainButton = button.Button(screen, try_again_img_blk, x=WIDTH//2 + 200,y=(2/3)*HEIGHT, scale=0.3, image_alt=try_again_img_alt) 
 
-shopButton = button.Button(screen, shop_img_w, x=WIDTH//2,y=(2/3)*HEIGHT + 250, scale=0.3, image_alt=shop_img_r)  
 
 
 # Clock for controlling frame rate
@@ -142,7 +154,15 @@ def startMenu():
     score = 0
     setSafeTime()
     mixer.set_music(start=True)
-
+    
+def setShop() -> None:
+    global playingGame, inShop
+    inShop = True
+    playingGame = False
+    mixer.set_music(isShop=True)
+    # setSafeTime()
+    
+    
    
 # Will Use Pygbag to check cache for previous data   
 def setLeaderBoard():
@@ -152,6 +172,11 @@ def setLeaderBoard():
                     Player('Dunkey', 3500),
                     Player('Carrot Top', 1450),
                     Player('Shania Twain', 500)]
+
+def drawShop():
+    shop_bg = pygame.image.load(f"{DIR}shop_back.png").convert()
+    screen.blit(shop_bg,(0,0))
+    
     
 def drawTeacher():
     teacher_x = WIDTH // 2 - 30
@@ -319,6 +344,8 @@ def drawMainMenu():
     
     startButton.draw()
     quitButton.draw()
+    pencil.draw()
+    
     
 
 def drawLeaderboard(score: int, board: list = leaderBoard, x: int =(WIDTH / 2)   , y: int = (HEIGHT /2) - 130 , length: int=5) -> None:
@@ -350,6 +377,8 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (mainMenu and quitButton.draw()):  # Get rid of this conditional and add logic to check if in window
             running = False
+            
+      
         if musicNotStarted:
             setLeaderBoard()
             mixer.set_music(start=True)
@@ -369,12 +398,14 @@ while running:
                     startMenu()
     
     # starts shop music and open shop menu                
-    if playingGame and shopButton.draw(isShop=True):
+    if playingGame and shopButton.draw(isShop=True, hide=inShop):
+        setShop()
+        inShop = True
         
-        # mixer.set_music(isShop=True)
-        pass
+       
+        
    
-    if not shopButton.draw(isShop=True) and playingGame and pygame.mouse.get_pressed()[0]:
+    if not shopButton.draw(isShop=True, hide = inShop) and playingGame and pygame.mouse.get_pressed()[0]:
         isCheating = True
 
         score += 1
@@ -391,7 +422,7 @@ while running:
             
         isCheating = False    
 
-    if isCheating and isTeacherLooking and not shopButton.draw(isShop=True):
+    if isCheating and isTeacherLooking and not shopButton.draw(isShop=True, hide=inShop):
         mixer.writing(stop=True)
         mixer.yell(volume=YELL_VOLUME)
         mixer.set_music(gameOver=True)
@@ -417,14 +448,32 @@ while running:
             setSafeTime()
         else:
             teacherTime -= 1
+    if not inShop:
+        screen.fill(BG_COLOR)
 
-    screen.fill(BG_COLOR)
-
-    drawClassroom()
-    drawEmptyDesks()
-    drawTeacher()
-    drawStudent()
+        drawClassroom()
+        drawEmptyDesks()
+        drawTeacher()
+        drawStudent()
     
+     # Logic for shop methods and conditionals    
+    if inShop:
+        # exitButton.draw()
+        # screen.fill("Black")
+        # drawShop()
+        # if pencil.draw():
+        #     pass
+        # elif glasses.draw():
+        #     pass
+        # elif ai_hat.draw():
+        #     pass
+        # elif tests.draw():
+        #     pass
+        # elif exitButton.draw():
+        #     inShop = False 
+        if exitButton.draw():
+            inShop = False
+            startGame()
 
     if mainMenu:
         drawMainMenu()
