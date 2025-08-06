@@ -21,6 +21,7 @@ safeTimeMax = 8 * FPS
 teacherTimeMin = 2 * FPS
 teacherTimeMax = 10 * FPS
 score = 0
+scoreMultiplier = 1
 money = 0
 testTimeForMoney = 15 * FPS
 timesAllowanceApplied = 0
@@ -42,7 +43,12 @@ background_colors = []
 warningTime = 0
 showWarning = False
 teacherBlinking = False
+blinkMultiplier = 1
 blinkCounter = 0
+hatBought = False
+pencilBought = False
+testBought = False
+glassesBought = False
 mixer = sound.Mixer()
 YELL_VOLUME = 0.3
 DIR = 'assets/buttons/'
@@ -129,7 +135,8 @@ def setTeacherTime():
 def startGame():
 
     global mainMenu, playingGame, score, money, timesAllowanceApplied, gameOver, isTeacherLooking
-
+    #Also restetting item stuff
+    global blinkMultiplier, scoreMultiplier, teacherTimeMin, teacherTimeMax, testTimeForMoney, hatBought, testBought, pencilBought, glassesBought
 
     mainMenu = False
     playingGame = True
@@ -137,6 +144,12 @@ def startGame():
     score = 0
     money = 0
     timesAllowanceApplied = 0
+    blinkMultiplier = 1
+    scoreMultiplier = 1
+    teacherTimeMin = 2 * FPS
+    teacherTimeMax = 10 * FPS
+    testTimeForMoney = 15 * FPS
+    hatBought, testBought, pencilBought, glassesBought = False, False, False, False
 
     isTeacherLooking = False
     
@@ -189,6 +202,32 @@ def drawShop():
     screen.blit(shop_bg,(0,0))
     
     
+
+def buyHat():
+    global money, teacherTimeMin, teacherTimeMax
+    if money >= 7:
+        money -= 7
+        teacherTimeMin = 1 * FPS
+        teacherTimeMax = 7 * FPS
+
+def buyTest():
+    global money, scoreMultiplier
+    if money >= 13:
+        money -= 13
+        scoreMultiplier *= 2
+
+def buyPencil():
+    global money, testTimeForMoney
+    if money >= 16:
+        money -= 16
+        testTimeForMoney = 10 * FPS
+
+def buyGlasses():
+    global money, blinkMultiplier
+    if money >= 4:
+        money -=4
+        blinkMultiplier = 2
+
 def drawTeacher():
     teacher_x = WIDTH // 2 - 30
     floor_y = int(HEIGHT * 0.65)
@@ -419,7 +458,7 @@ while running:
     if not shopButton.draw(isShop=True, hide = inShop) and playingGame and pygame.mouse.get_pressed()[0]:
         isCheating = True
 
-        score += 1
+        score += 1 * scoreMultiplier
        
         if not wasClicking:
             mixer.writing(volume=1.0)
@@ -450,7 +489,7 @@ while running:
             if safeTime <= warningTime:
                 showWarning = True
                 teacherBlinking = True
-                blinkCounter += 1
+                blinkCounter += 1 * blinkMultiplier
 
     elif playingGame and isTeacherLooking:
         if teacherTime <= 0:
