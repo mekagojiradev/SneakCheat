@@ -88,7 +88,7 @@ try_again_img_alt = pygame.image.load(f'{DIR}try_again_w.jpeg').convert_alpha()
 quit_img_blk = pygame.image.load(f'{DIR}quit_b.jpeg').convert_alpha()
 quit_img_alt = pygame.image.load(f'{DIR}quit_w.jpeg').convert_alpha()
 
-#Shop
+#Shop assets
 shop_img_w = pygame.image.load(f'{DIR}shop_w.jpeg').convert_alpha() 
 shop_img_r = pygame.image.load(f'{DIR}shop_r.jpeg').convert_alpha() 
 exit_img_w = pygame.image.load(f'{DIR}exit_w.jpeg').convert_alpha() 
@@ -101,7 +101,7 @@ shop_bg = pygame.image.load(f"{DIR}shop_back.png").convert()
 
 shop_bg = pygame.transform.scale(shop_bg,screen.get_size())
 
-# shop BUttons
+# shop BUttons (actual objects)
 pencil = button.Button(screen, pencil_img, x=WIDTH//2-300,y=(2/3)*HEIGHT , scale=2, image_alt=pencil_img)  
 tests = button.Button(screen, tests_img, x=WIDTH//2-100,y=(2/3)*HEIGHT , scale=2, image_alt=tests_img)  
 glasses = button.Button(screen, glasses_img, x=WIDTH//2+100,y=(2/3)*HEIGHT , scale=2, image_alt=glasses_img)  
