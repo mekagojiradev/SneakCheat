@@ -146,7 +146,7 @@ def startGame():
     playingGame = True
     gameOver = False
     score = 0
-    money = 0
+    money = 50
     timesAllowanceApplied = 0
     blinkMultiplier = 1
     scoreMultiplier = 1
@@ -207,7 +207,12 @@ def drawShop():
     global inShop
   
     shopButton.draw(hide=True)
-    screen.fill("White")
+    shop_overlay = pygame.Surface((WIDTH-400, HEIGHT-400))
+    shop_overlay.fill((90, 60, 20))
+    screen.blit(shop_overlay, (200, 200))
+    shop_overlay = pygame.Surface((WIDTH-400, HEIGHT-420))
+    shop_overlay.fill((15, 80, 25))
+    screen.blit(shop_overlay, (200, 210))
     
     # exitButton.draw()
     # drawShop()
