@@ -478,7 +478,7 @@ while running:
                     startMenu()
     
     # starts shop music and open shop menu                
-    if playingGame and shopButton.draw(isShop=True, hide=inShop):
+    if playingGame and shopButton.draw(hide=inShop):
         setShop()
         inShop = True
         
