@@ -577,6 +577,7 @@ while running:
                     mixer.yell(stop=True)
                     startMenu()
 
+
         
     shopButtonPressed = shopButton.draw(hide=inShop)
     # starts shop music and open shop menu                
@@ -584,6 +585,7 @@ while running:
         setShop()
 
     if not shopButtonPressed and playingGame and pygame.mouse.get_pressed()[0] and not(pygame.mouse.get_pos()[0] >= 885 and pygame.mouse.get_pos()[0] <= 1035 and pygame.mouse.get_pos()[1] >= 885 and pygame.mouse.get_pos()[1] <= 950):
+
         isCheating = True
 
         score += 1 * scoreMultiplier
@@ -600,7 +602,9 @@ while running:
             
         isCheating = False    
 
+
     if isCheating and isTeacherLooking and not shopButtonPressed:
+
         mixer.writing(stop=True)
         mixer.yell(volume=YELL_VOLUME)
         mixer.set_music(gameOver=True)
@@ -648,6 +652,7 @@ while running:
         drawMoney()
         if not inShop:
             shopButton.draw() # Change this to display shop button at diff time
+
     elif gameOver:
         updateLeaderboard(score)
         drawGameOver()
