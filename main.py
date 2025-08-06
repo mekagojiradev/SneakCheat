@@ -144,7 +144,18 @@ def startGame():
     mixer.ring_bell(volume=.1)
     mixer.set_music(isPlaying=True)
 
+def resumeGame():
+    global mainMenu, playingGame, score, money, timesAllowanceApplied, gameOver, isTeacherLooking
+
+
+    mainMenu = False
+    playingGame = True
+    gameOver = False
+    isTeacherLooking = False
     
+    setSafeTime()
+    mixer.set_music(isPlaying=True)
+       
 def startMenu():
     global mainMenu, playingGame, score, gameOver, isTeacherLooking
     mainMenu = True
@@ -290,7 +301,7 @@ def drawClassroom():
             pygame.draw.line(screen, (220, 240, 255), (x, window_y + window_height // 2), (x + window_width, window_y + window_height // 2), 2)
 
     door_width = 100
-    door_height = 22
+    door_height = 220
     door_x = 50
     door_y = floor_y - door_height
     pygame.draw.rect(screen, (120, 90, 40), (door_x, door_y, door_width, door_height))
@@ -458,11 +469,15 @@ while running:
     
      # Logic for shop methods and conditionals    
     if inShop:
+        shopButton.draw(hide=True)
+        screen.fill("Blue")
+        shop_bg = pygame.image.load(f"{DIR}shop_back.png").convert()
+        screen.blit(shop_bg,(0,0))
         # exitButton.draw()
         # screen.fill("Black")
         # drawShop()
-        # if pencil.draw():
-        #     pass
+        if pencil.draw():
+            pass
         # elif glasses.draw():
         #     pass
         # elif ai_hat.draw():
@@ -473,7 +488,7 @@ while running:
         #     inShop = False 
         if exitButton.draw():
             inShop = False
-            startGame()
+            resumeGame()
 
     if mainMenu:
         drawMainMenu()
