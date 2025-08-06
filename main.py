@@ -145,7 +145,7 @@ def setTeacherTime():
 
 def startGame():
 
-    global mainMenu, playingGame, score, money, timesAllowanceApplied, gameOver, isTeacherLooking
+    global mainMenu, playingGame, score, money, timesAllowanceApplied, gameOver, isTeacherLooking, pencil, tests, glasses, ai_hat
     #Also restetting item stuff
     global blinkMultiplier, scoreMultiplier, teacherTimeMin, teacherTimeMax, testTimeForMoney, hatBought, testBought, pencilBought, glassesBought
 
@@ -163,6 +163,10 @@ def startGame():
     hatBought, testBought, pencilBought, glassesBought = False, False, False, False
 
     isTeacherLooking = False
+    pencil = button.Button(screen, pencil_img, x=WIDTH//3-150,y=(2/3)*HEIGHT , scale=1, image_alt=pencil_img)  
+    tests = button.Button(screen, tests_img, x=WIDTH//2-450,y=(2/5)*HEIGHT , scale=1.3, image_alt=tests_img)  
+    glasses = button.Button(screen, glasses_img, x=WIDTH//2+100,y=(2/5)*HEIGHT , scale=1.5, image_alt=glasses_img)  
+    ai_hat = button.Button(screen, ai_img, x=WIDTH//2+100,y=(2/3)*HEIGHT , scale=1.5, image_alt=ai_img)  
     
     setSafeTime()
     mixer.ring_bell(volume=.1)
