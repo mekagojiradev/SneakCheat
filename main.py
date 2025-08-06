@@ -234,29 +234,33 @@ def drawShop():
     
 
 def buyHat():
-    global money, teacherTimeMin, teacherTimeMax
-    if money >= 7:
+    global money, teacherTimeMin, teacherTimeMax, hatBought
+    if money >= 7 and not hatBought:
         money -= 7
         teacherTimeMin = 1 * FPS
         teacherTimeMax = 7 * FPS
+        hatBought = True
 
 def buyTest():
-    global money, scoreMultiplier
-    if money >= 13:
+    global money, scoreMultiplier, testBought
+    if money >= 13 and not testBought:
         money -= 13
         scoreMultiplier *= 2
+        testBought = True
 
 def buyPencil():
-    global money, testTimeForMoney
-    if money >= 16:
+    global money, testTimeForMoney, pencilBought
+    if money >= 16 and not pencilBought:
         money -= 16
         testTimeForMoney = 10 * FPS
+        pencilBought = True
 
 def buyGlasses():
-    global money, blinkMultiplier
-    if money >= 4:
+    global money, blinkMultiplier, glassesBought
+    if money >= 4 and not glassesBought:
         money -=4
         blinkMultiplier = 2
+        glassesBought = True
 
 def drawTeacher():
     teacher_x = WIDTH // 2 - 30
@@ -486,8 +490,7 @@ while running:
     if playingGame and shopButtonPressed:
         setShop()
 
-   
-    if not shopButtonPressed and playingGame and pygame.mouse.get_pressed()[0]:
+    if not shopButtonPressed and playingGame and pygame.mouse.get_pressed()[0] and not(pygame.mouse.get_pos()[0] >= 885 and pygame.mouse.get_pos()[0] <= 1035 and pygame.mouse.get_pos()[1] >= 885 and pygame.mouse.get_pos()[1] <= 950):
         isCheating = True
 
         score += 1 * scoreMultiplier
